@@ -1,6 +1,8 @@
 package edu.ecsl.drone;
 
+import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
@@ -18,6 +20,8 @@ public class Graphics extends SimpleApplication {
 
     public Graphics(Engine e)
     {
+        super(new StatsAppState(), new DebugKeysAppState());
+
         engine = e;
     }
 
@@ -35,18 +39,29 @@ public class Graphics extends SimpleApplication {
 
         inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
         inputManager.addListener(al, "Pause");
+
+        inputManager.setCursorVisible(true);
+
     }
 
     @Override
     public void simpleUpdate(float dt)
     {
-        cube.rotate(0, 2*dt, 0);
+        if(isRunning)
+            cube.rotate(0, 2*dt, 0);
     }
 
     private boolean isRunning = true;
 
+    private ActionListener a = new ActionListener() {
+        @Override
+        public void onAction(String s, boolean b, float v) {
+
+        }
+    };
+
     private ActionListener al = (String name, boolean keyPressed, float dt) -> {
         if(name.equals("Pause") && !keyPressed)
-            System.out.println("Paused!");
+            isRunning = !isRunning;
     };
 }
