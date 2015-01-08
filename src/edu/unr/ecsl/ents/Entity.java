@@ -3,7 +3,14 @@ package edu.unr.ecsl.ents;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import edu.unr.ecsl.Engine;
+import edu.unr.ecsl.aspects.Aspect;
+import edu.unr.ecsl.aspects.Physics2D;
+import edu.unr.ecsl.aspects.UnitAI;
+import edu.unr.ecsl.aspects.UnitAspect;
 import edu.unr.ecsl.enums.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by cam on 1/5/15.
@@ -11,10 +18,10 @@ import edu.unr.ecsl.enums.*;
 public class Entity {
     public static int count = 0;
 
-    public Vector3f pos, vel, acc;
+    public Vector3f pos, vel, acc, potentialVec;
     public Quaternion rot, desiredRot;
 
-    public float yaw, desiredSpeed, desiredHeading, speed;
+    public float yaw, desiredSpeed, desiredHeading, speed, attractivePotential;
     public float maxSpeed, minSpeed, speedRange, heading, maxAcceleration;
     public float maxRotationalSpeed, desiredHeight, verticalSpeed, desiredVerticalSpeed;
 
@@ -31,6 +38,8 @@ public class Entity {
     public Player player;
     public Side side;
 
+    public List<UnitAspect> aspects = new ArrayList<>(3);
+
     public String uiname, meshName;
 
     public Engine engine;
@@ -41,6 +50,14 @@ public class Entity {
         type = entType;
 
         state = EntityState.ALIVE;
+
+        pos = new Vector3f();
+        vel = new Vector3f();
+        acc = new Vector3f();
+        potentialVec = new Vector3f();
+
+        rot = new Quaternion();
+        desiredRot = new Quaternion();
     }
 
     public boolean canFly() {
@@ -48,13 +65,25 @@ public class Entity {
     }
 
     public void init() {
+        aspects.add(new Physics2D(this));
+        aspects.add(new UnitAI(this));
 
+        for(Aspect asp : aspects)
+            asp.init();
+
+        print();
+    }
+
+    public void tick(float dt) {
+        for(UnitAspect aspect : aspects) {
+            aspect.tick(dt);
+        }
     }
 
     @Override
     public String toString() {
-        return "Entity {\n" +
-                "\tpos = " + pos +
+        return "Entity {" +
+                "\n\tpos = " + pos +
                 "\t\nvel = " + vel +
                 "\t\nacc = " + acc +
                 "\t\nrot = " + rot +
@@ -93,5 +122,18 @@ public class Entity {
                 "\t\nmeshName = '" + meshName + '\'' +
                 "\t\nengine = " + engine +
                 "\n}";
+    }
+
+    public void print() {
+        System.out.println(this.toString());
+    }
+
+    public UnitAspect getAspect(UnitAspectType type) {
+        for(UnitAspect aspect : aspects) {
+            if(aspect.aspectType == type)
+                return aspect;
+        }
+
+        return null;
     }
 }

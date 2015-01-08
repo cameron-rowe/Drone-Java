@@ -18,4 +18,6 @@ public class Options {
 
     public long seed;
     public String bitstring;
+
+    public int maxEntities;
 }

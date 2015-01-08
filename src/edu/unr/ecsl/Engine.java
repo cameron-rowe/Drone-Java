@@ -15,9 +15,10 @@ public class Engine implements Manager {
     public String[] args;
     public Options options;
 
-    Graphics graphics = null;
+    public Graphics graphics = null;
     public EntityManager entityManager;
     public GameManager gameManager;
+    public DistanceManager distanceManager;
 
     public List<Manager> managers = new ArrayList<>();
 
@@ -33,16 +34,20 @@ public class Engine implements Manager {
     }
 
     public void run() {
-        if (enableGfx)
+        if (enableGfx) {
             graphics.start();
+        }
 
         t1 = System.nanoTime();
         float dt, maxRuntime = 5.0f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
             dt = updateDT();
             totalRuntime += dt;
-            tick(dt * options.speedup);
+            tick(dt);
+
         }
+
+        graphics.stop();
     }
 
     @Override
@@ -54,14 +59,19 @@ public class Engine implements Manager {
 
     @Override
     public void init() {
-        if (enableGfx)
-            graphics = new Graphics(this);
-
         entityManager = new EntityManager(this);
         gameManager = new GameManager(this);
+        distanceManager = new DistanceManager(this);
 
         managers.add(entityManager);
         managers.add(gameManager);
+        managers.add(distanceManager);
+
+        for(Manager m : managers)
+            m.init();
+
+        if (enableGfx)
+            graphics = new Graphics(this);
     }
 
     @Override
@@ -121,5 +131,7 @@ public class Engine implements Manager {
         options.enableGfx = true;
         options.speedup = 10.0f;
         options.timeScalar = 2.0f;
+
+        options.maxEntities = 1024;
     }
 }

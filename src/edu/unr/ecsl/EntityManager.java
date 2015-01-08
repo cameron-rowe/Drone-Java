@@ -25,7 +25,9 @@ public class EntityManager implements Manager {
 
     @Override
     public void tick(float dt) {
-
+        for(Entity ent : ents) {
+            ent.tick(dt);
+        }
     }
 
     @Override

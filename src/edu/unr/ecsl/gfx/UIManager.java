@@ -18,6 +18,7 @@ import com.jme3.scene.debug.WireBox;
 import com.jme3.scene.debug.WireSphere;
 import com.jme3.scene.shape.Quad;
 import edu.unr.ecsl.Manager;
+import edu.unr.ecsl.ents.Entity;
 
 /**
  * Created by cam on 1/7/15.
@@ -68,32 +69,11 @@ public class UIManager implements Manager {
             switch (name) {
                 case "Left-Click":
                     selecting = keyPressed;
-                    //System.out.println("Left: " + keyPressed);
-                    if (selecting) {
-                        //selectionQuad = new Quad();
-                        selectionStartPos.set(inputManager.getCursorPosition());
-
-                        //selectionPoints[0] = selectionStartPos.x;
-                        //selectionPoints[1] = selectionStartPos.y;
-
-                        //selectionQuad.
-
-                        selectionGeometry = new Geometry("SelectionQuad", selectionQuad);
-                        Material mat = new Material(graphics.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-                        mat.setColor("Color", ColorRGBA.White);
-                        selectionGeometry.setMaterial(mat);
-                        //graphics.getRootNode().attachChild(selectionGeometry);
-                        selectionGeometry.setLocalTranslation(selectionStartPos.x, selectionStartPos.y, 1.0f);
-
-                        graphics.getGuiNode().attachChild(selectionGeometry);
-                    } else {
-                        handleVolumeSelection();
-
-                    }
+                    handleVolumeSelection();
                     break;
 
                 case "Right-Click":
-                    System.out.println("Right: " + keyPressed);
+                    handleRightClick();
                     break;
             }
         };
@@ -105,46 +85,71 @@ public class UIManager implements Manager {
     }
 
     private void handleVolumeSelection() {
-        graphics.getGuiNode().detachChild(selectionGeometry);
 
-        Vector2f endPos = inputManager.getCursorPosition();
+        if (selecting) {
+            //selectionQuad = new Quad();
+            selectionStartPos.set(inputManager.getCursorPosition());
 
-        float selectionMinX = selectionStartPos.x < endPos.x ? selectionStartPos.x : endPos.x;
-        float selectionMaxX = selectionStartPos.x > endPos.x ? selectionStartPos.x : endPos.x;
-        float selectionMinY = selectionStartPos.y < endPos.y ? selectionStartPos.y : endPos.y;
-        float selectionMaxY = selectionStartPos.y > endPos.y ? selectionStartPos.y : endPos.y;
+            //selectionPoints[0] = selectionStartPos.x;
+            //selectionPoints[1] = selectionStartPos.y;
 
-        Vector3f pos = new Vector3f();
+            //selectionQuad.
 
-        graphics.selected.detachAllChildren();
-        graphics.selectedNodes.clear();
-
-        for(Spatial obj : graphics.selectables.getChildren()) {
-            if(obj.getName().equals("Ground"))
-                continue;
-
-            graphics.getCamera().getScreenCoordinates(obj.getLocalTranslation(), pos);
-
-
-
-            if(pos.x >= selectionMinX && pos.x <= selectionMaxX &&
-                    pos.y >= selectionMinY && pos.y <= selectionMaxY)
-                graphics.selectedNodes.add(obj);
-
-
-        }
-
-        int i = 0;
-        for(Spatial obj : graphics.selectedNodes) {
-            //System.out.println("Selected: " + obj.getName());
-            WireSphere sphere = new WireSphere(15.0f);
-            Geometry geo = new Geometry("selected" + i, sphere);
+            selectionGeometry = new Geometry("SelectionQuad", selectionQuad);
             Material mat = new Material(graphics.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-            mat.setColor("Color", ColorRGBA.Red);
-            geo.setMaterial(mat);
-            graphics.selected.attachChild(geo);
-            i++;
+            mat.setColor("Color", ColorRGBA.White);
+            selectionGeometry.setMaterial(mat);
+            //graphics.getRootNode().attachChild(selectionGeometry);
+            selectionGeometry.setLocalTranslation(selectionStartPos.x, selectionStartPos.y, 1.0f);
+
+            graphics.getGuiNode().attachChild(selectionGeometry);
         }
+
+        else {
+            graphics.getGuiNode().detachChild(selectionGeometry);
+
+            Vector2f endPos = inputManager.getCursorPosition();
+
+            float selectionMinX = selectionStartPos.x < endPos.x ? selectionStartPos.x : endPos.x;
+            float selectionMaxX = selectionStartPos.x > endPos.x ? selectionStartPos.x : endPos.x;
+            float selectionMinY = selectionStartPos.y < endPos.y ? selectionStartPos.y : endPos.y;
+            float selectionMaxY = selectionStartPos.y > endPos.y ? selectionStartPos.y : endPos.y;
+
+            Vector3f pos = new Vector3f();
+
+            graphics.selected.detachAllChildren();
+            graphics.selectedNodes.clear();
+
+            for (Spatial obj : graphics.selectables.getChildren()) {
+                if (obj.getName().equals("Ground"))
+                    continue;
+
+                graphics.getCamera().getScreenCoordinates(obj.getLocalTranslation(), pos);
+
+
+                if (pos.x >= selectionMinX && pos.x <= selectionMaxX &&
+                        pos.y >= selectionMinY && pos.y <= selectionMaxY)
+                    graphics.selectedNodes.add(obj);
+
+
+            }
+
+            //System.out.println(graphics.selectedNodes.size());
+
+            for (int i = 0; i < graphics.selectedNodes.size(); i++) {
+                //System.out.println("Selected: " + obj.getName());
+                WireSphere sphere = new WireSphere(15.0f);
+                Geometry geo = new Geometry("selected" + i, sphere);
+                Material mat = new Material(graphics.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+                mat.setColor("Color", ColorRGBA.Red);
+                geo.setMaterial(mat);
+                graphics.selected.attachChild(geo);
+            }
+        }
+
+    }
+
+    private void handleRightClick() {
 
     }
 

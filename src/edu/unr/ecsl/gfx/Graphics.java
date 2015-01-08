@@ -4,6 +4,7 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
+import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
@@ -27,6 +28,8 @@ import com.jme3.util.SkyFactory;
 import com.jme3.water.SimpleWaterProcessor;
 import com.jme3.water.WaterFilter;
 import edu.unr.ecsl.Engine;
+import edu.unr.ecsl.ents.Entity;
+import edu.unr.ecsl.enums.Side;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,30 +46,14 @@ public class Graphics extends SimpleApplication {
         super(new StatsAppState(), new DebugKeysAppState());
         engine = e;
     }
-    /**
-     *
-     * <pre>
-     * getStateManager().detach(getStateManager().getState(FlyCamAppState.class));
-     * RtsCam rtsCam = new RtsCam(UpVector.Y_UP);
-     * rtsCam.setCenter(new Vector3f(0, 0, 0));
-     * rtsCam.setDistance(200);
-     * rtsCam.setMaxSpeed(DoF.FWD, 100, 0.5f);
-     * rtsCam.setMaxSpeed(DoF.SIDE, 100, 0.5f);
-     * rtsCam.setMaxSpeed(DoF.DISTANCE, 100, 0.5f);
-     * rtsCam.setHeightProvider(new HeightProvider() {
-     *     public float getHeight(Vector2f coord) {
-     *         return terrain.getHeight(coord)+10;
-     *     }
-     * });
-     * getStateManager().attach(rtsCam);
-     * </pre>
-     *
-     */
 
     private DirectionalLight sun;
     private UIManager uiManager;
     public Node selectables, selected;
     public List<Spatial> selectedNodes = new ArrayList<>();
+    public GFXNode[] gfxNodes;
+    public int nGFXNodes = 0;
+
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("Assets", FileLocator.class);
@@ -80,6 +67,11 @@ public class Graphics extends SimpleApplication {
         uiManager.init();
         setDisplayStatView(false);
 
+        gfxNodes = new GFXNode[engine.options.maxEntities];
+        for (int i = 0; i < engine.options.maxEntities; i++) {
+            gfxNodes[i] = new GFXNode();
+        }
+
         setupCamera();
 
         //setupInput();
@@ -88,6 +80,7 @@ public class Graphics extends SimpleApplication {
 
 
         setupWater();
+
 //        TerrainQuad terrain = new TerrainQuad("Ground", 257, 257, null);
 //        Material terrain_mat = new Material(assetManager, "Common/MatDefs/Terrain/TerrainLighting.j3md");
 //        Texture terrain_texture = assetManager.loadTexture("Textures/terrain_texture.jpg");
@@ -104,11 +97,22 @@ public class Graphics extends SimpleApplication {
     {
         uiManager.tick(dt);
 
+        for (int i = 0; i < nGFXNodes; i++) {
+            Spatial child = selectables.getChild(i);
+            child.setLocalTranslation(engine.entityManager.ents.get(gfxNodes[i].id).pos);
+            child.setLocalRotation(engine.entityManager.ents.get(gfxNodes[i].id).rot);
+        }
+
         int i = 0;
         for(Spatial obj : selectedNodes) {
             Vector3f pos = obj.getLocalTranslation();
 
-            selected.getChild("selected" + i).setLocalTranslation(pos.x,pos.y,pos.z);
+            Spatial child = selected.getChild("selected" + i);
+
+            if (child != null) {
+                child.setLocalTranslation(pos.x,pos.y,pos.z);
+            }
+
             i++;
         }
 
@@ -129,15 +133,11 @@ public class Graphics extends SimpleApplication {
     }
 
     private void setupScene() {
-        Spatial drone = assetManager.loadModel("Models/Test/Monkey.obj");
-        drone.setName("Monkey");
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        //Texture tex = assetManager.loadTexture("Textures/BeachStones.jpg");
-        //mat.setTexture("ColorMap", tex);
-        drone.setMaterial(mat);
-        drone.getLocalTransform().setTranslation(0.0f, 10.0f, 0.0f);
-        //drone.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        selectables.attachChild(drone);
+        for(Entity ent : engine.entityManager.ents) {
+            addGFXNode(ent);
+        }
+
+
 
         sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
@@ -238,5 +238,43 @@ public class Graphics extends SimpleApplication {
         inputManager.addListener(al, "W", "A", "S", "D");
 
         inputManager.setCursorVisible(true);
+    }
+
+    public void addGFXNode(Entity ent) {
+        Spatial gfxNode;
+        try {
+            gfxNode = assetManager.loadModel("Models/" + ent.meshName);
+        }
+
+        catch (AssetNotFoundException e) {
+            gfxNode = assetManager.loadModel("Models/Test/CornellBox.j3o");
+        }
+
+        gfxNode.setName(ent.uiname);
+
+
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture tex;
+
+        if(ent.side == Side.BLUE) {
+            tex = assetManager.loadTexture("Textures/ecslDark.bmp");
+        }
+
+        else {
+            tex = assetManager.loadTexture("Textures/ecsl.bmp");
+        }
+
+        mat.setTexture("ColorMap", tex);
+        gfxNode.setMaterial(mat);
+        gfxNode.getLocalTransform().setTranslation(ent.pos);
+        //drone.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        selectables.attachChild(gfxNode);
+
+        gfxNodes[nGFXNodes].node = gfxNode;
+        gfxNodes[nGFXNodes].selectable = ent.selectable;
+        gfxNodes[nGFXNodes].actionable = true;
+        gfxNodes[nGFXNodes].id = ent.id;
+
+        nGFXNodes += 1;
     }
 }
