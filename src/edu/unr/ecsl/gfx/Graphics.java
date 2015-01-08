@@ -28,11 +28,14 @@ import com.jme3.water.SimpleWaterProcessor;
 import com.jme3.water.WaterFilter;
 import edu.unr.ecsl.Engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by cam on 10/10/14.
  */
 public class Graphics extends SimpleApplication {
-    private Engine engine;
+    public Engine engine;
     private RTSCamera rtsCamera;
 
     public Graphics(Engine e)
@@ -61,9 +64,20 @@ public class Graphics extends SimpleApplication {
      */
 
     private DirectionalLight sun;
+    private UIManager uiManager;
+    public Node selectables, selected;
+    public List<Spatial> selectedNodes = new ArrayList<>();
     @Override
     public void simpleInitApp() {
         assetManager.registerLocator("Assets", FileLocator.class);
+
+        selectables = new Node("Selectable");
+        selected = new Node("Selected");
+        rootNode.attachChild(selectables);
+        rootNode.attachChild(selected);
+
+        uiManager = new UIManager(this);
+        uiManager.init();
         setDisplayStatView(false);
 
         setupCamera();
@@ -88,6 +102,24 @@ public class Graphics extends SimpleApplication {
     @Override
     public void simpleUpdate(float dt)
     {
+        uiManager.tick(dt);
+
+        int i = 0;
+        for(Spatial obj : selectedNodes) {
+            Vector3f pos = obj.getLocalTranslation();
+
+            selected.getChild("selected" + i).setLocalTranslation(pos.x,pos.y,pos.z);
+            i++;
+        }
+
+//        for(Spatial obj : selectables.getChildren()) {
+//            if(obj.getName().equals("Ground")) {
+//                continue;
+//            }
+//
+//            Vector3f pos = obj.getLocalTranslation();
+//            obj.setLocalTranslation(pos.x, pos.y + (dt * 10), pos.z);
+//        }
     }
 
     @Override
@@ -98,13 +130,14 @@ public class Graphics extends SimpleApplication {
 
     private void setupScene() {
         Spatial drone = assetManager.loadModel("Models/Test/Monkey.obj");
+        drone.setName("Monkey");
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         //Texture tex = assetManager.loadTexture("Textures/BeachStones.jpg");
         //mat.setTexture("ColorMap", tex);
         drone.setMaterial(mat);
         drone.getLocalTransform().setTranslation(0.0f, 10.0f, 0.0f);
         //drone.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        rootNode.attachChild(drone);
+        selectables.attachChild(drone);
 
         sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
@@ -142,6 +175,17 @@ public class Graphics extends SimpleApplication {
         //water.setWaterHeight(5.0f);
         fpp.addFilter(water);
         viewPort.addProcessor(fpp);
+
+        Quad q = new Quad(10000.0f,10000.0f);
+        Geometry groundPlane = new Geometry("Ground", q);
+        groundPlane.rotate(FastMath.HALF_PI,0.0f,0.0f);
+        groundPlane.setLocalTranslation(-5000.0f,0.0f,-5000.0f);
+        groundPlane.setCullHint(Spatial.CullHint.Always);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", ColorRGBA.Red);
+        groundPlane.setMaterial(mat);
+
+        selectables.attachChild(groundPlane);
 //        SimpleWaterProcessor waterP = new SimpleWaterProcessor(assetManager);
 //
 //        waterP.setReflectionScene(mainScene);

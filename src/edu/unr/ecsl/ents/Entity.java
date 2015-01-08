@@ -23,6 +23,7 @@ public class Entity {
 
     public float turningRadius, length, width, height, depth;
     public float mass, drag;
+    public boolean selectable;
 
     public EntityType type;
     public EntityState state;
@@ -44,5 +45,53 @@ public class Entity {
 
     public boolean canFly() {
         return false;
+    }
+
+    public void init() {
+
+    }
+
+    @Override
+    public String toString() {
+        return "Entity {\n" +
+                "\tpos = " + pos +
+                "\t\nvel = " + vel +
+                "\t\nacc = " + acc +
+                "\t\nrot = " + rot +
+                "\t\ndesiredRot = " + desiredRot +
+                "\t\nyaw = " + yaw +
+                "\t\ndesiredSpeed = " + desiredSpeed +
+                "\t\ndesiredHeading = " + desiredHeading +
+                "\t\nspeed = " + speed +
+                "\t\nmaxSpeed = " + maxSpeed +
+                "\t\nminSpeed = " + minSpeed +
+                "\t\nspeedRange = " + speedRange +
+                "\t\nheading = " + heading +
+                "\t\nmaxAcceleration = " + maxAcceleration +
+                "\t\nmaxRotationalSpeed = " + maxRotationalSpeed +
+                "\t\ndesiredHeight = " + desiredHeight +
+                "\t\nverticalSpeed = " + verticalSpeed +
+                "\t\ndesiredVerticalSpeed = " + desiredVerticalSpeed +
+                "\t\nhitpoints = " + hitpoints +
+                "\t\nhitpointsMax = " + hitpointsMax +
+                "\t\nseekRange = " + seekRange +
+                "\t\nid = " + id +
+                "\t\nturningRadius = " + turningRadius +
+                "\t\nlength = " + length +
+                "\t\nwidth = " + width +
+                "\t\nheight = " + height +
+                "\t\ndepth = " + depth +
+                "\t\nmass = " + mass +
+                "\t\ndrag = " + drag +
+                "\t\nselectable = " + selectable +
+                "\t\ntype = " + type +
+                "\t\nstate = " + state +
+                "\t\nentityClass = " + entityClass +
+                "\t\nplayer = " + player +
+                "\t\nside = " + side +
+                "\t\nuiname = '" + uiname + '\'' +
+                "\t\nmeshName = '" + meshName + '\'' +
+                "\t\nengine = " + engine +
+                "\n}";
     }
 }
