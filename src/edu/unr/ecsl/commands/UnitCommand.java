@@ -21,5 +21,7 @@ public abstract class UnitCommand extends Command {
         super(ct);
         entity = ent;
         target = targ;
+
+        relativePos = new Vector3f();
     }
 }

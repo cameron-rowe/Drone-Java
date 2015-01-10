@@ -38,10 +38,10 @@ public class Physics3D extends Physics {
         Quaternion desiredRot = new Quaternion().fromAngleAxis(entity.desiredHeading, Vector3f.UNIT_Y);
 
         //update it all
-        entity.rot = new Quaternion().slerp(desiredRot, entity.rot, entity.maxRotationalSpeed * dt);
+        entity.rot.slerp(desiredRot, entity.maxRotationalSpeed * dt);
 
         //entity.heading = entity.rot.getYaw().valueRadians();
-        entity.heading = entity.rot.getY();
+        entity.heading = entity.rot.toAngles(null)[1];
         entity.yaw     = entity.heading;
 
         entity.verticalSpeed = FastMath.clamp(entity.verticalSpeed, -entity.maxSpeed, entity.maxSpeed);

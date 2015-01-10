@@ -6,7 +6,6 @@ import edu.unr.ecsl.gfx.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by cam on 10/10/14.
@@ -19,6 +18,7 @@ public class Engine implements Manager {
     public EntityManager entityManager;
     public GameManager gameManager;
     public DistanceManager distanceManager;
+    public WeaponManager weaponManager;
 
     public List<Manager> managers = new ArrayList<>();
 
@@ -39,11 +39,11 @@ public class Engine implements Manager {
         }
 
         t1 = System.nanoTime();
-        float dt, maxRuntime = 5.0f * options.timeScalar;
+        float dt, maxRuntime = 500.0f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
             dt = updateDT();
             totalRuntime += dt;
-            tick(dt);
+            tick(dt * options.speedup);
 
         }
 
@@ -62,10 +62,12 @@ public class Engine implements Manager {
         entityManager = new EntityManager(this);
         gameManager = new GameManager(this);
         distanceManager = new DistanceManager(this);
+        weaponManager = new WeaponManager(this);
 
         managers.add(entityManager);
         managers.add(gameManager);
         managers.add(distanceManager);
+        managers.add(weaponManager);
 
         for(Manager m : managers)
             m.init();
@@ -129,7 +131,7 @@ public class Engine implements Manager {
 //        }
 
         options.enableGfx = true;
-        options.speedup = 10.0f;
+        options.speedup = 2.0f;
         options.timeScalar = 2.0f;
 
         options.maxEntities = 1024;

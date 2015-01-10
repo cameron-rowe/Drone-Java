@@ -30,7 +30,7 @@ public class Entity {
 
     public float turningRadius, length, width, height, depth;
     public float mass, drag;
-    public boolean selectable;
+    public boolean selectable, isAttacking;
 
     public EntityType type;
     public EntityState state;

@@ -7,11 +7,7 @@ import com.jme3.bounding.BoundingVolume;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseAxisTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.input.controls.*;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -264,7 +260,7 @@ public class RTSCamera extends AbstractAppState {
 
         }
 
-        float distanceChange = maxSpeedPerSecondOfAccell[DISTANCE] * accelTime[DISTANCE] * tpf;
+        float distanceChange = maxSpeedPerSecondOfAccell[DISTANCE] * accelTime[DISTANCE] * tpf * speedBoost;
         distance += distanceChange;
         distance += offsetMoves[DISTANCE];
 
@@ -413,6 +409,8 @@ public class RTSCamera extends AbstractAppState {
         return cam;
     }
 
+    private float speedBoost = 1f;
+
     private void registerWithInput(InputManager inputManager) {
         this.inputManager = inputManager;
 
@@ -448,6 +446,21 @@ public class RTSCamera extends AbstractAppState {
         inputManager.addMapping("BUTTON2", new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE));
         inputManager.addMapping("BUTTON3", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
 
+        inputManager.addMapping("LSHIFT", new KeyTrigger(KeyInput.KEY_LSHIFT));
+
+        ActionListener al = (name, keyPressed, tpf) -> {
+          if(name.equals("LSHIFT")) {
+              if(keyPressed) {
+                  speedBoost = 10f;
+              }
+
+              else {
+                  speedBoost = 1f;
+              }
+          }
+        };
+
+        inputManager.addListener(al, "LSHIFT");
         inputManager.addListener(listener, mappings);
     }
 
@@ -520,7 +533,7 @@ public class RTSCamera extends AbstractAppState {
                 if (!wheelEnabled) {
                     return;
                 }
-                float speed = maxSpeedPerSecondOfAccell[DISTANCE] * maxAccellPeriod[DISTANCE] * WHEEL_SPEED;
+                float speed = maxSpeedPerSecondOfAccell[DISTANCE] * maxAccellPeriod[DISTANCE] * WHEEL_SPEED * speedBoost;
                 offsetMoves[DISTANCE] += value * speed;
             } else if (name.contains("MOUSE")) {
                 if (mouseRotation) {

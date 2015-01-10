@@ -6,9 +6,7 @@ import edu.unr.ecsl.ents.Target;
 import edu.unr.ecsl.enums.UnitAspectType;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
 
 /**
  * Created by cam on 1/8/15.
@@ -37,14 +35,18 @@ public class UnitAI extends UnitAspect {
 
     @Override
     public void tick(float dt) {
-        if(!commands.isEmpty()) {
-            commands.getFirst().tick(dt);
+        try {
+            if(!commands.isEmpty()) {
+                commands.getFirst().tick(dt);
 
-            if(commands.getFirst().done()) {
-                commands.removeFirst();
-                if(!commands.isEmpty())
-                    commands.getFirst().init();
+                if(commands.getFirst().done()) {
+                    commands.removeFirst();
+                    if(!commands.isEmpty())
+                        commands.getFirst().init();
+                }
             }
+        } catch (Exception e) {
+            System.err.println("Thread Access Error: UnitAI::tick");
         }
     }
 

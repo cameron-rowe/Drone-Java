@@ -1,7 +1,6 @@
 package edu.unr.ecsl.commands;
 
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import edu.unr.ecsl.DistanceManager;
 import edu.unr.ecsl.ents.Entity;

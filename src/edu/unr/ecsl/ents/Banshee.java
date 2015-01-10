@@ -6,11 +6,9 @@ import edu.unr.ecsl.Util;
 import edu.unr.ecsl.aspects.Aspect;
 import edu.unr.ecsl.aspects.Physics3D;
 import edu.unr.ecsl.aspects.UnitAI;
-import edu.unr.ecsl.aspects.UnitAspect;
 import edu.unr.ecsl.commands.Command;
 import edu.unr.ecsl.enums.EntityType;
 import edu.unr.ecsl.enums.Side;
-import edu.unr.ecsl.enums.UnitAspectType;
 
 /**
  * Created by cam on 1/5/15.
@@ -22,7 +20,7 @@ public class Banshee extends Entity {
         super(eng, EntityType.BANSHEE);
 
         meshName = "Test/Monkey.obj";
-        uiname = String.format("Drone.%d", count);
+        uiname = String.format("Drone.%d", count++);
 
         length = Util.meters(5.0f);
         width = Util.meters(2.0f);
@@ -57,13 +55,13 @@ public class Banshee extends Entity {
         for(Aspect asp : aspects)
             asp.init();
 
-        Command.createPotentialMove3DForEnt(this, new Vector3f(0.0f, 10.0f, -1000.0f));
+        //Command.createPotentialMove3DForEnt(this, new Vector3f(0.0f, 10.0f, -1000.0f));
     }
 
     @Override
     public void tick(float dt) {
         super.tick(dt);
 
-        pos.addLocal(5.0f * dt, 0.0f, 0.0f);
+        //pos.addLocal(5.0f * dt, 0.0f, 0.0f);
     }
 }

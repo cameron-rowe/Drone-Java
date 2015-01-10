@@ -65,17 +65,37 @@ public abstract class Command {
             ai.setCommand(pm);
     }
 
-    public static void createMoveForEnt(Entity ent, Vector3f pos) {
-        createMoveForEnt(ent, pos, false);
+    public static void createMove2DForEnt(Entity ent, Vector3f pos) {
+        createMove2DForEnt(ent, pos, false);
     }
 
-    public static void createMoveForEnt(Entity ent, Vector3f pos, boolean append) {
+    public static void createMove2DForEnt(Entity ent, Vector3f pos, boolean append) {
         Target target = new Target();
         target.entity = null;
         target.location = pos;
         target.offset = new Vector3f();
 
         Move mv = new Move(ent, target);
+        mv.init();
+
+        UnitAI ai = (UnitAI) ent.getAspect(UnitAspectType.UNITAI);
+
+        if(append)
+            ai.addCommand(mv);
+
+        else
+            ai.setCommand(mv);
+    }
+
+    public static void createMove3DForEnt(Entity ent, Vector3f pos) { createMove3DForEnt(ent, pos, false);}
+
+    public static void createMove3DForEnt(Entity ent, Vector3f pos, boolean append) {
+        Target target = new Target();
+        target.entity = null;
+        target.location = pos;
+        target.offset = new Vector3f();
+
+        MoveDirect3D mv = new MoveDirect3D(ent, target);
         mv.init();
 
         UnitAI ai = (UnitAI) ent.getAspect(UnitAspectType.UNITAI);

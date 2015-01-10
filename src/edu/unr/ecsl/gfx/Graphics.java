@@ -6,33 +6,34 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.plugins.FileLocator;
-import com.jme3.input.controls.ActionListener;
+import com.jme3.input.KeyInput;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
-import com.jme3.math.*;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
-import com.jme3.input.KeyInput;
+import com.jme3.scene.debug.WireSphere;
+import com.jme3.scene.shape.Cylinder;
+import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
-import com.jme3.terrain.Terrain;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
-import com.jme3.water.SimpleWaterProcessor;
 import com.jme3.water.WaterFilter;
 import edu.unr.ecsl.Engine;
 import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.enums.Side;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cam on 10/10/14.
@@ -41,17 +42,17 @@ public class Graphics extends SimpleApplication {
     public Engine engine;
     private RTSCamera rtsCamera;
 
-    public Graphics(Engine e)
-    {
+    public Graphics(Engine e) {
         super(new StatsAppState(), new DebugKeysAppState());
         engine = e;
     }
 
     private DirectionalLight sun;
     private UIManager uiManager;
-    public Node selectables, selected;
-    public List<Spatial> selectedNodes = new ArrayList<>();
+    public Node selectables, selected, debug;
+    public List<GFXNode> selectedNodes = new ArrayList<>();
     public GFXNode[] gfxNodes;
+    public Map<String, GFXNode> nodeMap = new HashMap<>();
     public int nGFXNodes = 0;
 
     @Override
@@ -60,8 +61,10 @@ public class Graphics extends SimpleApplication {
 
         selectables = new Node("Selectable");
         selected = new Node("Selected");
+        debug = new Node("Debug");
         rootNode.attachChild(selectables);
         rootNode.attachChild(selected);
+        rootNode.attachChild(debug);
 
         uiManager = new UIManager(this);
         uiManager.init();
@@ -78,7 +81,6 @@ public class Graphics extends SimpleApplication {
         setupScene();
 
 
-
         setupWater();
 
 //        TerrainQuad terrain = new TerrainQuad("Ground", 257, 257, null);
@@ -93,37 +95,16 @@ public class Graphics extends SimpleApplication {
     }
 
     @Override
-    public void simpleUpdate(float dt)
-    {
+    public void simpleUpdate(float dt) {
         uiManager.tick(dt);
 
         for (int i = 0; i < nGFXNodes; i++) {
-            Spatial child = selectables.getChild(i);
+            Spatial child = gfxNodes[i].node;
             child.setLocalTranslation(engine.entityManager.ents.get(gfxNodes[i].id).pos);
             child.setLocalRotation(engine.entityManager.ents.get(gfxNodes[i].id).rot);
         }
 
-        int i = 0;
-        for(Spatial obj : selectedNodes) {
-            Vector3f pos = obj.getLocalTranslation();
-
-            Spatial child = selected.getChild("selected" + i);
-
-            if (child != null) {
-                child.setLocalTranslation(pos.x,pos.y,pos.z);
-            }
-
-            i++;
-        }
-
-//        for(Spatial obj : selectables.getChildren()) {
-//            if(obj.getName().equals("Ground")) {
-//                continue;
-//            }
-//
-//            Vector3f pos = obj.getLocalTranslation();
-//            obj.setLocalTranslation(pos.x, pos.y + (dt * 10), pos.z);
-//        }
+        decorateSelectedEntities();
     }
 
     @Override
@@ -133,15 +114,14 @@ public class Graphics extends SimpleApplication {
     }
 
     private void setupScene() {
-        for(Entity ent : engine.entityManager.ents) {
-            addGFXNode(ent);
+        for (Entity ent : engine.entityManager.ents) {
+            addEntity(ent);
         }
-
 
 
         sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
-        sun.setDirection(new Vector3f(-0.5f,-0.5f,-0.5f).normalizeLocal());
+        sun.setDirection(new Vector3f(-0.5f, -0.5f, -0.5f).normalizeLocal());
         //sun.setDirection(new Vector3f(0,-1.0f,0).normalizeLocal());
         rootNode.addLight(sun);
 
@@ -176,10 +156,10 @@ public class Graphics extends SimpleApplication {
         fpp.addFilter(water);
         viewPort.addProcessor(fpp);
 
-        Quad q = new Quad(10000.0f,10000.0f);
+        Quad q = new Quad(10000.0f, 10000.0f);
         Geometry groundPlane = new Geometry("Ground", q);
-        groundPlane.rotate(FastMath.HALF_PI,0.0f,0.0f);
-        groundPlane.setLocalTranslation(-5000.0f,0.0f,-5000.0f);
+        groundPlane.rotate(FastMath.HALF_PI, 0.0f, 0.0f);
+        groundPlane.setLocalTranslation(-5000.0f, 0.0f, -5000.0f);
         groundPlane.setCullHint(Spatial.CullHint.Always);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Red);
@@ -210,25 +190,25 @@ public class Graphics extends SimpleApplication {
 
     private void setupInput() {
         AnalogListener al = (name, keypressed, tfp) -> {
-          switch(name) {
-              case "W":
-                  System.out.println("w!");
+            switch (name) {
+                case "W":
+                    System.out.println("w!");
 
-                  break;
+                    break;
 
-              case "A":
-                  System.out.println("a!");
-                  break;
+                case "A":
+                    System.out.println("a!");
+                    break;
 
-              case "S":
-                  System.out.println("s!");
-                  break;
+                case "S":
+                    System.out.println("s!");
+                    break;
 
-              case "D":
-                  System.out.println("d!");
-                  break;
+                case "D":
+                    System.out.println("d!");
+                    break;
 
-          }
+            }
         };
         inputManager.addMapping("W", new KeyTrigger(KeyInput.KEY_W));
         inputManager.addMapping("A", new KeyTrigger(KeyInput.KEY_A));
@@ -240,27 +220,22 @@ public class Graphics extends SimpleApplication {
         inputManager.setCursorVisible(true);
     }
 
-    public void addGFXNode(Entity ent) {
+    public void addEntity(Entity ent) {
         Spatial gfxNode;
         try {
             gfxNode = assetManager.loadModel("Models/" + ent.meshName);
-        }
-
-        catch (AssetNotFoundException e) {
+        } catch (AssetNotFoundException e) {
             gfxNode = assetManager.loadModel("Models/Test/CornellBox.j3o");
         }
 
         gfxNode.setName(ent.uiname);
 
-
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         Texture tex;
 
-        if(ent.side == Side.BLUE) {
+        if (ent.side == Side.BLUE) {
             tex = assetManager.loadTexture("Textures/ecslDark.bmp");
-        }
-
-        else {
+        } else {
             tex = assetManager.loadTexture("Textures/ecsl.bmp");
         }
 
@@ -275,6 +250,51 @@ public class Graphics extends SimpleApplication {
         gfxNodes[nGFXNodes].actionable = true;
         gfxNodes[nGFXNodes].id = ent.id;
 
+        nodeMap.put(ent.uiname, gfxNodes[nGFXNodes]);
+
         nGFXNodes += 1;
+    }
+
+    private void decorateSelectedEntities() {
+        selected.detachAllChildren();
+        for(GFXNode gfxNode : selectedNodes) {
+            Vector3f pos = gfxNode.node.getLocalTranslation().clone();
+            pos.y -= 8.0f;
+            selected.attachChild(makeDisk(pos, 3.0f, ColorRGBA.Blue));
+        }
+
+//        for(GFXNode gfxNode : selectedNodes) {
+//            WireSphere sphere = new WireSphere(15.0f);
+//            Geometry geo = new Geometry("Selected", sphere);
+//            Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//            mat.setColor("Color", ColorRGBA.Red);
+//            geo.setMaterial(mat);
+//            geo.setLocalTranslation(gfxNode.node.getLocalTranslation());
+//            selected.attachChild(geo);
+//        }
+    }
+
+    public Geometry makeLine(Vector3f startPos, Vector3f stopPos, ColorRGBA color) {
+        Line line = new Line(startPos, stopPos);
+        line.setLineWidth(2.0f);
+        Geometry geo = new Geometry("Line", line);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", color);
+        geo.setMaterial(mat);
+
+        return geo;
+    }
+
+    public Geometry makeDisk(Vector3f pos, float radius, ColorRGBA color) {
+        Cylinder cylinder = new Cylinder(30, 30, radius, 1.0f, true);
+        Geometry geo = new Geometry("Disk", cylinder);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", color);
+        geo.setMaterial(mat);
+
+        geo.setLocalRotation(new Quaternion().fromAngleAxis(FastMath.HALF_PI, Vector3f.UNIT_X));
+        geo.setLocalTranslation(pos.x, pos.y+1.0f, pos.z);
+
+        return geo;
     }
 }
