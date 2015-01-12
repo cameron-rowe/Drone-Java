@@ -27,6 +27,7 @@ public class Engine implements Manager {
     private boolean running = true;
 
     public float totalRuntime = 0.0f;
+    public float maxRuntime;
 
     private static Engine instance = null;
     public static Engine getInstance() {
@@ -47,7 +48,8 @@ public class Engine implements Manager {
         }
 
         t1 = System.nanoTime();
-        float dt, maxRuntime = 500.0f * options.timeScalar;
+        float dt;
+        maxRuntime = 500.0f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
             dt = updateDT();
             totalRuntime += dt;
@@ -147,6 +149,6 @@ public class Engine implements Manager {
         options.maxEntities = 1024;
 
         options.gameNumber = 1;
-        options.scenario = 2;
+        options.scenario = 3;
     }
 }

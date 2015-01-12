@@ -23,8 +23,12 @@ import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 import edu.unr.ecsl.Engine;
+import edu.unr.ecsl.aspects.UnitAI;
+import edu.unr.ecsl.commands.Command;
+import edu.unr.ecsl.commands.UnitCommand;
 import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.enums.Side;
+import edu.unr.ecsl.enums.UnitAspectType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -224,6 +228,18 @@ public class Graphics extends SimpleApplication {
             Vector3f pos = gfxNode.node.getLocalTranslation().clone();
             pos.y -= 8.0f;
             selected.attachChild(makeDisk(pos, 3.0f, ColorRGBA.Blue));
+
+            UnitAI ai = (UnitAI) engine.entityManager.ents.get(gfxNode.id).getAspect(UnitAspectType.UNITAI);
+
+            if(ai != null) {
+                if(!ai.commands.isEmpty()) {
+                    UnitCommand command = (UnitCommand) ai.commands.getFirst();
+
+                    if(command != null) {
+                        selected.attachChild(makeLine(pos, command.target.location, ColorRGBA.Cyan));
+                    }
+                }
+            }
         }
 
 //        for(GFXNode gfxNode : selectedNodes) {

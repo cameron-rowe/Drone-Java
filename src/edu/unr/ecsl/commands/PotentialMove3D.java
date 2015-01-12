@@ -3,6 +3,7 @@ package edu.unr.ecsl.commands;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import edu.unr.ecsl.DistanceManager;
+import edu.unr.ecsl.ai.GA;
 import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.ents.Target;
 
@@ -23,12 +24,19 @@ public class PotentialMove3D extends PotentialMove {
 
     @Override
     public void init() {
-        A = 5000.0f;
-        B = 50000.0f;
-        B2 = 300000.0f;
-        m = 3.0f;
-        m2 = 3.0f;
-        n = 2.0f;
+//        A = 5000.0f;
+//        B = 50000.0f;
+//        B2 = 300000.0f;
+//        m = 3.0f;
+//        m2 = 3.0f;
+//        n = 2.0f;
+
+        A  = GA.getInstance().getParams().A;
+        B  = GA.getInstance().getParams().B;
+        B2 = GA.getInstance().getParams().B2;
+        m  = GA.getInstance().getParams().m;
+        m2 = GA.getInstance().getParams().m2;
+        n  = GA.getInstance().getParams().n;
 
         repulsionThresholdDistance = 10000.0f;
     }

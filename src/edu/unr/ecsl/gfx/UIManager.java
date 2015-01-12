@@ -39,7 +39,7 @@ public class UIManager implements Manager {
     }
 
     private WireBox selectionQuad = new WireBox();
-    private boolean renderIM = true;
+    private boolean renderIM = false;
     @Override
     public void tick(float dt) {
         if (selecting) {
@@ -65,7 +65,6 @@ public class UIManager implements Manager {
 
             for(GFXNode gfxNode : graphics.selectedNodes) {
                 graphics.debug.attachChild(graphics.makeLine(gfxNode.node.getLocalTranslation(), moveTarget, ColorRGBA.Green));
-
             }
         }
 
@@ -84,7 +83,6 @@ public class UIManager implements Manager {
     private Geometry selectionGeometry;
     private Vector3f rightClickStartPos, moveTarget;
     private float mouseMoveY;
-    public List<Line> debugLines = new ArrayList<>();
 
     private void initInput() {
         ActionListener al = (name, keyPressed, tpf) -> {
@@ -148,7 +146,6 @@ public class UIManager implements Manager {
 
             graphics.selectedNodes.clear();
 
-            int count = 0;
             for (Spatial obj : graphics.selectables.getChildren()) {
                 if (obj.getName().equals("Ground"))
                     continue;
@@ -202,7 +199,6 @@ public class UIManager implements Manager {
         return null;
     }
 
-    private boolean first = true;
     private void drawInfluenceMap() {
         InfluenceMap3D map = graphics.engine.infoManager.map;
         Box box = new Box();
@@ -237,11 +233,6 @@ public class UIManager implements Manager {
                     min.set(x,y,z);
                     geo.setLocalTranslation(min);
                     graphics.debug.attachChild(geo);
-
-                    if(first) {
-                        System.out.println(min);
-                        first = false;
-                    }
                 }
             }
         }

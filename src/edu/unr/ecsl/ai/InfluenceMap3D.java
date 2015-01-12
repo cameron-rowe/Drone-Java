@@ -55,9 +55,9 @@ public class InfluenceMap3D {
 
         currentMax = Integer.MAX_VALUE;
 
-        int value = 30, radius = 13;
-//        int value = GA.getInstance().getParams().unitValue;
-//        int radius = GA.getInstance().getParams().unitRadius;
+//        int value = 30, radius = 13;
+        int value = GA.getInstance().getParams().unitValue;
+        int radius = GA.getInstance().getParams().unitRadius;
 
         for(Map.Entry<Entity, RegObj3D> entry : registeredObjects.entrySet()) {
             if(!entry.getValue().exist) continue;

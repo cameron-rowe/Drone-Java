@@ -5,6 +5,7 @@ import edu.unr.ecsl.Engine;
 import edu.unr.ecsl.Manager;
 import edu.unr.ecsl.commands.Command;
 import edu.unr.ecsl.ents.Entity;
+import edu.unr.ecsl.enums.EntityState;
 import edu.unr.ecsl.enums.Player;
 
 import java.io.IOException;
@@ -20,7 +21,6 @@ public class AIManager implements Manager {
 
     private Player player;
     private InfluenceMap3D map;
-    private Vector3f target;
 
     private List<Entity> friendly = new ArrayList<>();
     private List<Entity> enemies = new ArrayList<>();
@@ -57,6 +57,9 @@ public class AIManager implements Manager {
             if(enemies.isEmpty())
                 return;
 
+            friendPos.zero();
+            enemyPos.zero();
+
             for(Entity fEnt : friendly) {
                 if(!fEnt.isAttacking)
                     Command.createPotentialMove3DForEnt(fEnt, map.targetPos);
@@ -70,7 +73,19 @@ public class AIManager implements Manager {
                     fEnt.isAttacking = true;
 
                 }
+                friendPos.addLocal(fEnt.pos);
             }
+
+            friendPos.divideLocal((float) friendly.size());
+
+            for(Entity eEnt : enemies) {
+                enemyPos.addLocal(eEnt.pos);
+            }
+
+            enemyPos.divideLocal((float) enemies.size());
+
+            totalDistance += friendPos.distance(enemyPos);
+            numTicks++;
         }
     }
 
@@ -87,7 +102,43 @@ public class AIManager implements Manager {
     public void evaluateMatch() {
         String fileName = "fitness_" + engine.options.seed + ".txt";
 
-        float fitness = 0.0f;
+        float fitness = 0f;
+        float totalEnemyHealth = 0f;
+        float totalFriendlyHealth = 0f;
+
+        int enemyCount = 0, enemyDeadCount = 0, friendCount = 0, friendDeadCount = 0;
+
+        for(Entity ent : engine.entityManager.ents) {
+            if(ent.player != engine.options.player) {
+                enemyCount++;
+                if(ent.hitpoints > 0f)
+                    totalEnemyHealth += ent.hitpoints;
+
+                if(ent.state == EntityState.DEAD)
+                    enemyDeadCount++;
+            }
+
+            else {
+                friendCount++;
+
+                if(ent.hitpoints > 0f)
+                    totalFriendlyHealth += ent.hitpoints;
+
+                if(ent.state == EntityState.DEAD)
+                    friendDeadCount++;
+            }
+        }
+
+        if(enemyDeadCount == 0 && friendDeadCount == 0) {
+            fitness = (1.0f - ((totalDistance / numTicks) / maxDistance)) * 100.0f;
+        }
+
+        else {
+            fitness = (totalFriendlyHealth - totalEnemyHealth) +
+                    ((1.0f - (engine.totalRuntime / engine.maxRuntime)) * 100f);
+        }
+
+        fitness += 500f;
 
         try(PrintWriter fout = new PrintWriter(fileName)) {
             fout.println(fitness);
