@@ -34,7 +34,7 @@ public class InfluenceMap3D {
         registeredObjects = new TreeMap<>();
         targetPos = new Vector3f();
         influenceType = type;
-        updatedt = 0.0f;
+        updatedt = Float.MAX_VALUE;
     }
 
     public void tick(float dt) {
@@ -56,6 +56,8 @@ public class InfluenceMap3D {
         currentMax = Integer.MAX_VALUE;
 
         int value = 30, radius = 13;
+//        int value = GA.getInstance().getParams().unitValue;
+//        int radius = GA.getInstance().getParams().unitRadius;
 
         for(Map.Entry<Entity, RegObj3D> entry : registeredObjects.entrySet()) {
             if(!entry.getValue().exist) continue;
@@ -84,7 +86,7 @@ public class InfluenceMap3D {
                         int y = j * cellResY + (cellResY/2);
                         int z = k * cellResZ + (cellResZ/2);
 
-                        targetPos.set(x,z,y);
+                        targetPos.set(x,y,z);
                         currentMax = map[i][j][k];
                     }
 
@@ -129,9 +131,9 @@ public class InfluenceMap3D {
             for(int y = startY; y < stopY; y++) {
                 for(int z = startZ; z < stopZ; z++) {
                     int value = 0;
-                    int distX = (int) FastMath.abs((float)(x - gridX));
-                    int distY = (int) FastMath.abs((float) (y - gridY));
-                    int distZ = (int) FastMath.abs((float)(z - gridZ));
+//                    int distX = (int) FastMath.abs((float)(x - gridX));
+//                    int distY = (int) FastMath.abs((float) (y - gridY));
+//                    int distZ = (int) FastMath.abs((float)(z - gridZ));
 
                     float destD = 0;
                     if(!(x==gridX && y==gridY && z==gridZ)) {

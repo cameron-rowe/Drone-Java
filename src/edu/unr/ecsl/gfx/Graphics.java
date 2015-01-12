@@ -6,9 +6,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.plugins.FileLocator;
-import com.jme3.input.KeyInput;
-import com.jme3.input.controls.AnalogListener;
-import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -19,7 +16,6 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.debug.WireSphere;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
@@ -76,11 +72,8 @@ public class Graphics extends SimpleApplication {
         }
 
         setupCamera();
-
-        //setupInput();
+        setupInput();
         setupScene();
-
-
         setupWater();
 
 //        TerrainQuad terrain = new TerrainQuad("Ground", 257, 257, null);
@@ -96,12 +89,15 @@ public class Graphics extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float dt) {
+        selected.detachAllChildren();
+        debug.detachAllChildren();
+
         uiManager.tick(dt);
 
         for (int i = 0; i < nGFXNodes; i++) {
-            Spatial child = gfxNodes[i].node;
-            child.setLocalTranslation(engine.entityManager.ents.get(gfxNodes[i].id).pos);
-            child.setLocalRotation(engine.entityManager.ents.get(gfxNodes[i].id).rot);
+            Spatial spatial = gfxNodes[i].node;
+            spatial.setLocalTranslation(engine.entityManager.ents.get(gfxNodes[i].id).pos);
+            spatial.setLocalRotation(engine.entityManager.ents.get(gfxNodes[i].id).rot);
         }
 
         decorateSelectedEntities();
@@ -118,16 +114,11 @@ public class Graphics extends SimpleApplication {
             addEntity(ent);
         }
 
-
         sun = new DirectionalLight();
         sun.setColor(ColorRGBA.White);
         sun.setDirection(new Vector3f(-0.5f, -0.5f, -0.5f).normalizeLocal());
         //sun.setDirection(new Vector3f(0,-1.0f,0).normalizeLocal());
         rootNode.addLight(sun);
-
-//        AmbientLight amb = new AmbientLight();
-//        amb.setColor(ColorRGBA.White.mult(0.8f));
-//        rootNode.addLight(amb);
 
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
     }
@@ -136,14 +127,14 @@ public class Graphics extends SimpleApplication {
         cam.setFrustumFar(3000.0f);
         getStateManager().detach(getStateManager().getState(FlyCamAppState.class));
         rtsCamera = new RTSCamera(RTSCamera.UpVector.Y_UP);
-        rtsCamera.setCenter(Vector3f.ZERO);
+        rtsCamera.setCenter(new Vector3f(250f, 100f, 250f));
         rtsCamera.setDistance(400.0f);
         //rtsCamera.setTilt(-FastMath.QUARTER_PI);
         rtsCamera.setRot(FastMath.TWO_PI);
 
-        rtsCamera.setMaxSpeed(RTSCamera.DoF.FWD, 100.0f, 0.5f);
-        rtsCamera.setMaxSpeed(RTSCamera.DoF.SIDE, 100.0f, 0.5f);
-        rtsCamera.setMaxSpeed(RTSCamera.DoF.DISTANCE, 100.0f, 0.5f);
+        rtsCamera.setMaxSpeed(RTSCamera.DoF.FWD, 250f, 0.5f);
+        rtsCamera.setMaxSpeed(RTSCamera.DoF.SIDE, 250f, 0.5f);
+        rtsCamera.setMaxSpeed(RTSCamera.DoF.DISTANCE, 250f, 0.5f);
         //cam.setFrustumNear(0.01f);
         getStateManager().attach(rtsCamera);
 
@@ -189,34 +180,6 @@ public class Graphics extends SimpleApplication {
     }
 
     private void setupInput() {
-        AnalogListener al = (name, keypressed, tfp) -> {
-            switch (name) {
-                case "W":
-                    System.out.println("w!");
-
-                    break;
-
-                case "A":
-                    System.out.println("a!");
-                    break;
-
-                case "S":
-                    System.out.println("s!");
-                    break;
-
-                case "D":
-                    System.out.println("d!");
-                    break;
-
-            }
-        };
-        inputManager.addMapping("W", new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("A", new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("S", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addMapping("D", new KeyTrigger(KeyInput.KEY_D));
-
-        inputManager.addListener(al, "W", "A", "S", "D");
-
         inputManager.setCursorVisible(true);
     }
 
@@ -256,7 +219,7 @@ public class Graphics extends SimpleApplication {
     }
 
     private void decorateSelectedEntities() {
-        selected.detachAllChildren();
+
         for(GFXNode gfxNode : selectedNodes) {
             Vector3f pos = gfxNode.node.getLocalTranslation().clone();
             pos.y -= 8.0f;

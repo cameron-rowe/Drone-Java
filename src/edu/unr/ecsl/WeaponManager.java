@@ -2,8 +2,8 @@ package edu.unr.ecsl;
 
 import edu.unr.ecsl.enums.EntityType;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by cam on 1/8/15.
@@ -15,7 +15,7 @@ public class WeaponManager implements Manager {
     public WeaponManager(Engine eng) {
         engine = eng;
 
-        weaponTypes = new HashMap<>(EntityType.values().length);
+        weaponTypes = new TreeMap<>();
     }
 
     @Override

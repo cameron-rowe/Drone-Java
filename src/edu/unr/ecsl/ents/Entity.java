@@ -3,10 +3,7 @@ package edu.unr.ecsl.ents;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import edu.unr.ecsl.Engine;
-import edu.unr.ecsl.aspects.Aspect;
-import edu.unr.ecsl.aspects.Physics2D;
-import edu.unr.ecsl.aspects.UnitAI;
-import edu.unr.ecsl.aspects.UnitAspect;
+import edu.unr.ecsl.aspects.*;
 import edu.unr.ecsl.enums.*;
 
 import java.util.ArrayList;
@@ -15,7 +12,7 @@ import java.util.List;
 /**
  * Created by cam on 1/5/15.
  */
-public class Entity {
+public class Entity implements Comparable<Entity> {
     public static int count = 0;
 
     public Vector3f pos, vel, acc, potentialVec;
@@ -67,6 +64,7 @@ public class Entity {
     public void init() {
         aspects.add(new Physics2D(this));
         aspects.add(new UnitAI(this));
+        aspects.add(new WeaponAspect(this));
 
         for(Aspect asp : aspects)
             asp.init();
@@ -75,8 +73,16 @@ public class Entity {
     }
 
     public void tick(float dt) {
-        for(UnitAspect aspect : aspects) {
-            aspect.tick(dt);
+        switch (state) {
+            case ALIVE:
+                for(UnitAspect aspect : aspects) {
+                    aspect.tick(dt);
+                }
+                break;
+            case DYING:
+                pos.y = -10000f;
+                state = EntityState.DEAD;
+                break;
         }
     }
 
@@ -135,5 +141,13 @@ public class Entity {
         }
 
         return null;
+    }
+
+    @Override
+    public int compareTo(Entity o) {
+        if(id == o.id)
+            return 0;
+
+        return (id < o.id) ? -1 : 1;
     }
 }

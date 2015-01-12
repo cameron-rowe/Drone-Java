@@ -47,7 +47,7 @@ public class Physics3D extends Physics {
         entity.verticalSpeed = FastMath.clamp(entity.verticalSpeed, -entity.maxSpeed, entity.maxSpeed);
         entity.speed = FastMath.clamp(entity.speed, entity.minSpeed, entity.maxSpeed);
 
-        entity.vel.set(FastMath.cos(-entity.heading) * entity.speed, 0.0f, FastMath.sin(-entity.heading) * entity.speed);
+        entity.vel.set(FastMath.cos(-entity.heading) * entity.speed, entity.verticalSpeed, FastMath.sin(-entity.heading) * entity.speed);
         //finally update pos
         entity.pos.addLocal(entity.vel.mult(dt));
 

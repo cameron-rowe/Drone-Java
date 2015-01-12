@@ -44,7 +44,7 @@ public class AIManager implements Manager {
     }
 
 
-    private float totalDT = 0.0f;
+    private float totalDT = 0f;
     private Vector3f friendPos = new Vector3f(), enemyPos = new Vector3f();
 
     @Override
@@ -54,7 +54,9 @@ public class AIManager implements Manager {
         if(totalDT > 0.5f) {
             totalDT = 0.0f;
 
-            int count = 0;
+            if(enemies.isEmpty())
+                return;
+
             for(Entity fEnt : friendly) {
                 if(!fEnt.isAttacking)
                     Command.createPotentialMove3DForEnt(fEnt, map.targetPos);
@@ -62,7 +64,6 @@ public class AIManager implements Manager {
                 Entity closest = engine.entityManager.ents.get(engine.distanceManager.closestEnemy[fEnt.id]);
 
                 fEnt.isAttacking = false;
-                count++;
 
                 if(engine.distanceManager.distance[fEnt.id][closest.id] < 500.0f) {
                     Command.createPotentialMove3DForEnt(fEnt, closest.pos);

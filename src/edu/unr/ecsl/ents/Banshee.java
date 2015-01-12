@@ -1,12 +1,11 @@
 package edu.unr.ecsl.ents;
 
-import com.jme3.math.Vector3f;
 import edu.unr.ecsl.Engine;
 import edu.unr.ecsl.Util;
 import edu.unr.ecsl.aspects.Aspect;
 import edu.unr.ecsl.aspects.Physics3D;
 import edu.unr.ecsl.aspects.UnitAI;
-import edu.unr.ecsl.commands.Command;
+import edu.unr.ecsl.aspects.WeaponAspect;
 import edu.unr.ecsl.enums.EntityType;
 import edu.unr.ecsl.enums.Side;
 
@@ -51,17 +50,9 @@ public class Banshee extends Entity {
     public void init() {
         aspects.add(new Physics3D(this));
         aspects.add(new UnitAI(this));
+        aspects.add(new WeaponAspect(this));
 
         for(Aspect asp : aspects)
             asp.init();
-
-        //Command.createPotentialMove3DForEnt(this, new Vector3f(0.0f, 10.0f, -1000.0f));
-    }
-
-    @Override
-    public void tick(float dt) {
-        super.tick(dt);
-
-        //pos.addLocal(5.0f * dt, 0.0f, 0.0f);
     }
 }

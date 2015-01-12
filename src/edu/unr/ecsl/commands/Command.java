@@ -105,5 +105,7 @@ public abstract class Command {
 
         else
             ai.setCommand(mv);
+
+        System.out.println("Created Command");
     }
 }

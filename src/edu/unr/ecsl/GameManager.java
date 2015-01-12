@@ -43,7 +43,7 @@ public class GameManager implements Manager {
 
                 for (int i = 0; i < 10; i++) {
                     ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
-                            new Vector3f(i * 20.0f, 10.0f, 0.0f),
+                            new Vector3f(i * 20.0f, 20f, 0.0f),
                             0.0f, Side.BLUE, Player.ONE);
 
                     ent.init();
@@ -52,10 +52,26 @@ public class GameManager implements Manager {
 
             case 2:
                 ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
-                        new Vector3f(0.0f, 10.0f, 0.0f),
+                        new Vector3f(0.0f, 20f, 0.0f),
                         0.0f, Side.BLUE, Player.ONE);
 
                 ent.init();
+            break;
+
+            case 3:
+                for (int i = 0; i < 5; i++) {
+                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
+                            new Vector3f(200f + (i * 20f), 20f, 0f),
+                            0f, Side.BLUE, Player.ONE);
+                    ent.init();
+
+
+                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
+                            new Vector3f(200f + (i * 20f), 20f, 500f),
+                            0f, Side.RED, Player.TWO);
+                    ent.init();
+                }
+            break;
         }
     }
 }

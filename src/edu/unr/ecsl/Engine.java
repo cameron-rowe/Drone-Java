@@ -1,5 +1,6 @@
 package edu.unr.ecsl;
 
+import edu.unr.ecsl.ai.InfoManager;
 import edu.unr.ecsl.enums.Player;
 import edu.unr.ecsl.gfx.Graphics;
 
@@ -19,22 +20,29 @@ public class Engine implements Manager {
     public GameManager gameManager;
     public DistanceManager distanceManager;
     public WeaponManager weaponManager;
+    public InfoManager infoManager;
 
     public List<Manager> managers = new ArrayList<>();
 
-    private boolean enableGfx = true;
     private boolean running = true;
 
     public float totalRuntime = 0.0f;
 
+    private static Engine instance = null;
+    public static Engine getInstance() {
+        return instance;
+    }
+
     public Engine(String[] cmdArgs) {
         args = cmdArgs;
+        instance = this;
+
         initOptions();
         init();
     }
 
     public void run() {
-        if (enableGfx) {
+        if (options.enableGfx) {
             graphics.start();
         }
 
@@ -48,6 +56,8 @@ public class Engine implements Manager {
         }
 
         graphics.stop();
+
+        stop();
     }
 
     @Override
@@ -63,22 +73,25 @@ public class Engine implements Manager {
         gameManager = new GameManager(this);
         distanceManager = new DistanceManager(this);
         weaponManager = new WeaponManager(this);
+        infoManager = new InfoManager(this);
 
+        managers.add(weaponManager);
+        managers.add(infoManager);
         managers.add(entityManager);
         managers.add(gameManager);
         managers.add(distanceManager);
-        managers.add(weaponManager);
 
         for(Manager m : managers)
             m.init();
 
-        if (enableGfx)
+        if (options.enableGfx)
             graphics = new Graphics(this);
     }
 
     @Override
     public void stop() {
         running = false;
+        infoManager.ai.evaluateMatch();
     }
 
     private long t1;
@@ -100,9 +113,6 @@ public class Engine implements Manager {
         options.isServer = true;
 
         options.instanceId = rand.nextLong();
-
-        options.gameNumber = 1;
-        options.scenario = 1;
 
         options.player = Player.ONE;
 
@@ -135,5 +145,8 @@ public class Engine implements Manager {
         options.timeScalar = 2.0f;
 
         options.maxEntities = 1024;
+
+        options.gameNumber = 1;
+        options.scenario = 2;
     }
 }

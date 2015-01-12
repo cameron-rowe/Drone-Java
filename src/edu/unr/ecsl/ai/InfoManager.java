@@ -2,6 +2,7 @@ package edu.unr.ecsl.ai;
 
 import edu.unr.ecsl.Engine;
 import edu.unr.ecsl.Manager;
+import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.enums.Player;
 
 /**
@@ -12,7 +13,7 @@ public class InfoManager implements Manager {
 
     private int frame;
     private float dtime;
-    private AIManager ai;
+    public AIManager ai;
 
     public InfluenceMap3D map;
 
@@ -22,7 +23,8 @@ public class InfoManager implements Manager {
 
     @Override
     public void tick(float dt) {
-
+        map.tick(dt);
+        ai.tick(dt);
     }
 
     @Override
@@ -31,8 +33,8 @@ public class InfoManager implements Manager {
         dtime = 0.0f;
 
         int sizeX = 64;
-        int sizeY = 64;
-        int sizeZ = 16;
+        int sizeY = 16;
+        int sizeZ = 64;
         int unitSize = 64;
 
         map = new InfluenceMap3D(InfluenceMap3D.MapType.IM_OCCUPANCE);
@@ -40,6 +42,11 @@ public class InfoManager implements Manager {
 
         ai = new AIManager(engine, map, Player.ONE);
         ai.init();
+    }
+
+    public void addEntity(Entity ent) {
+        ai.addEntity(ent);
+        map.registerGameObject(ent);
     }
 
     @Override

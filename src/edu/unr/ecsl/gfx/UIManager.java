@@ -2,19 +2,24 @@ package edu.unr.ecsl.gfx;
 
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.material.Material;
-import com.jme3.math.*;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireBox;
-import com.jme3.scene.debug.WireSphere;
-import com.jme3.scene.shape.Cylinder;
+import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
 import edu.unr.ecsl.Manager;
+import edu.unr.ecsl.ai.InfluenceMap3D;
 import edu.unr.ecsl.commands.Command;
 import edu.unr.ecsl.ents.Entity;
 
@@ -34,7 +39,7 @@ public class UIManager implements Manager {
     }
 
     private WireBox selectionQuad = new WireBox();
-
+    private boolean renderIM = true;
     @Override
     public void tick(float dt) {
         if (selecting) {
@@ -45,8 +50,6 @@ public class UIManager implements Manager {
             selectionGeometry.setLocalTranslation(selectionStartPos.x + width / 2.0f, selectionStartPos.y + height / 2.0f, 1.0f);
             selectionQuad.updatePositions(width / 2.0f, height / 2.0f, 1.0f);
         }
-
-        graphics.debug.detachAllChildren();
 
         if(handlingMove) {
             Vector2f mousePos = inputManager.getCursorPosition();
@@ -65,6 +68,9 @@ public class UIManager implements Manager {
 
             }
         }
+
+        if(renderIM)
+            drawInfluenceMap();
     }
 
     @Override
@@ -92,13 +98,19 @@ public class UIManager implements Manager {
                     handlingMove = keyPressed;
                     handleRightClick();
                     break;
+
+                case "I":
+                    if(keyPressed)
+                        renderIM = !renderIM;
+                    break;
             }
         };
 
         inputManager.addMapping("Left-Click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
         inputManager.addMapping("Right-Click", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+        inputManager.addMapping("I", new KeyTrigger(KeyInput.KEY_I));
 
-        inputManager.addListener(al, "Left-Click", "Right-Click");
+        inputManager.addListener(al, "Left-Click", "Right-Click", "I");
     }
 
     private void handleVolumeSelection() {
@@ -134,7 +146,6 @@ public class UIManager implements Manager {
 
             Vector3f pos = new Vector3f();
 
-            graphics.selected.detachAllChildren();
             graphics.selectedNodes.clear();
 
             int count = 0;
@@ -148,36 +159,8 @@ public class UIManager implements Manager {
                 if (pos.x >= selectionMinX && pos.x <= selectionMaxX &&
                         pos.y >= selectionMinY && pos.y <= selectionMaxY) {
                     graphics.selectedNodes.add(graphics.nodeMap.get(obj.getName()));
-//                    WireSphere sphere = new WireSphere(15.0f);
-//                    Geometry geo = new Geometry("Selected", sphere);
-//                    Material mat = new Material(graphics.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-//                    mat.setColor("Color", ColorRGBA.Red);
-//                    geo.setMaterial(mat);
-//                    graphics.selected.attachChild(geo);
-//
-//                    GFXNode gfxNode = new GFXNode();
-//                    gfxNode.node = geo;
-//                    gfxNode.id = count++;
-//                    gfxNode.selectable = false;
-//                    gfxNode.actionable = false;
-//
-//                    graphics.selectedNodes.add(gfxNode);
                 }
-
-
             }
-
-            //System.out.println(graphics.selectedNodes.size());
-
-//            for (int i = 0; i < graphics.selectedNodes.size(); i++) {
-//                //System.out.println("Selected: " + obj.getName());
-//                WireSphere sphere = new WireSphere(15.0f);
-//                Geometry geo = new Geometry("selected" + i, sphere);
-//                Material mat = new Material(graphics.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-//                mat.setColor("Color", ColorRGBA.Red);
-//                geo.setMaterial(mat);
-//                graphics.selected.attachChild(geo);
-//            }
         }
 
     }
@@ -199,8 +182,6 @@ public class UIManager implements Manager {
             for(GFXNode gfxNode : graphics.selectedNodes) {
                 Entity ent = graphics.engine.entityManager.ents.get(gfxNode.id);
                 Command.createMove3DForEnt(ent, moveTarget.clone());
-
-                System.out.println("Move3D: " + moveTarget.toString());
             }
         }
     }
@@ -219,6 +200,56 @@ public class UIManager implements Manager {
         }
 
         return null;
+    }
+
+    private boolean first = true;
+    private void drawInfluenceMap() {
+        InfluenceMap3D map = graphics.engine.infoManager.map;
+        Box box = new Box();
+        int maxValue = 0;
+
+        for (int i = 0; i < map.dataSizeX; i++) {
+            for (int j = 0; j < map.dataSizeY; j++) {
+                for (int k = 0; k < map.dataSizeZ; k++) {
+                    int x = (int) ((float) i * (float) map.cellResX + ((float) map.cellResX/2f));
+                    int y = (int) ((float) j * (float) map.cellResY + ((float) map.cellResY/2f));
+                    int z = (int) ((float) k * (float) map.cellResZ + ((float) map.cellResZ/2f));
+
+                    if(map.map[i][j][k] == 0)
+                        continue;
+
+                    int offset = 32;
+                    int xMax = x + map.cellResX - offset;
+                    int yMax = y + map.cellResY - offset;
+                    int zMax = z + map.cellResZ - offset;
+
+                    float map_value = (float)map.map[i][j][k] / 100f;
+
+                    Vector3f min = new Vector3f(x, y, z), max = new Vector3f(xMax, yMax, zMax);
+                    max.subtractLocal(min);
+                    min.zero();
+                    box.updateGeometry(min, max);
+                    Geometry geo = new Geometry("Box", box);
+                    ColorRGBA color = new ColorRGBA(0, map_value, 1.0f-map_value, 0.2f);
+                    Material mat = new Material(graphics.getAssetManager(),"Common/MatDefs/Misc/Unshaded.j3md");
+                    mat.setColor("Color", color);
+                    geo.setMaterial(mat);
+                    min.set(x,y,z);
+                    geo.setLocalTranslation(min);
+                    graphics.debug.attachChild(geo);
+
+                    if(first) {
+                        System.out.println(min);
+                        first = false;
+                    }
+                }
+            }
+        }
+
+        Vector3f point = map.targetPos;
+        Vector3f point2 = point.clone();
+        point2.y += 1000f;
+        graphics.debug.attachChild(graphics.makeLine(point, point2, ColorRGBA.Red));
     }
 
     @Override

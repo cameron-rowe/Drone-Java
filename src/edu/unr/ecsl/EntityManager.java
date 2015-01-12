@@ -44,6 +44,8 @@ public class EntityManager implements Manager {
         ent.id = ents.size();
         ents.add(ent);
 
+        engine.infoManager.addEntity(ent);
+
         return ent.id;
     }
 
