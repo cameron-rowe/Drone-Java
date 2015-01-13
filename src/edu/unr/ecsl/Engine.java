@@ -52,10 +52,9 @@ public class Engine implements Manager {
         float dt;
         maxRuntime = 10f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
-            dt = updateDT();
+            dt = 1.1804E-5f;//updateDT();
             totalRuntime += dt;
             tick(dt * options.speedup);
-
         }
 
         if(options.enableGfx)
@@ -137,8 +136,8 @@ public class Engine implements Manager {
                 System.err.println("Unknown cmd arg: " + args[i]);
         }
 
-        options.speedup = 3.0f;
-        options.timeScalar = 100f;
+        options.speedup = 15.0f;
+        options.timeScalar = 1f;
 
         options.maxEntities = 1024;
 

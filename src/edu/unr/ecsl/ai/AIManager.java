@@ -112,6 +112,7 @@ public class AIManager implements Manager {
         double totalFriendlyHealth = 0;
 
         int enemyCount = 0, enemyDeadCount = 0, friendCount = 0, friendDeadCount = 0;
+        boolean combatOccurred = false;
 
         for(Entity ent : engine.entityManager.ents) {
             if(ent.player != engine.options.player) {
@@ -121,6 +122,9 @@ public class AIManager implements Manager {
 
                 if(ent.state == EntityState.DEAD)
                     enemyDeadCount++;
+
+                if(ent.hitpoints != ent.hitpointsMax)
+                    combatOccurred = true;
             }
 
             else {
@@ -131,24 +135,22 @@ public class AIManager implements Manager {
 
                 if(ent.state == EntityState.DEAD)
                     friendDeadCount++;
+
+                if(ent.hitpoints != ent.hitpointsMax)
+                    combatOccurred = true;
             }
         }
 
-        boolean combatOccurred;
-
-        if(enemyDeadCount == 0 && friendDeadCount == 0) {
-            fitness = (1.0 - ((totalDistance / numTicks) / maxDistance)) * 100.0;
-            combatOccurred = false;
+        if(combatOccurred) {
+            fitness = (totalFriendlyHealth - totalEnemyHealth) +
+                    ((1.0 - (engine.totalRuntime / engine.maxRuntime)) * 100.0) + 500f;
         }
 
         else {
-            fitness = (totalFriendlyHealth - totalEnemyHealth) +
-                    ((1.0 - (engine.totalRuntime / engine.maxRuntime)) * 100.0);
-
-            combatOccurred = true;
+            fitness = (1.0 - ((totalDistance / numTicks) / maxDistance)) * 100.0;
         }
 
-        fitness = Math.max(fitness, 0f);
+        //fitness += 500.0;
 
         if(combatOccurred) {
             System.out.printf("Fitness -- combat: %.2f\n", fitness);
