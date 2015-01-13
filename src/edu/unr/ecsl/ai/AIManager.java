@@ -134,18 +134,29 @@ public class AIManager implements Manager {
             }
         }
 
+        boolean combatOccurred;
+
         if(enemyDeadCount == 0 && friendDeadCount == 0) {
             fitness = (1.0 - ((totalDistance / numTicks) / maxDistance)) * 100.0;
+            combatOccurred = false;
         }
 
         else {
             fitness = (totalFriendlyHealth - totalEnemyHealth) +
                     ((1.0 - (engine.totalRuntime / engine.maxRuntime)) * 100.0);
+
+            combatOccurred = true;
         }
 
-        fitness += 500.0;
+        fitness = Math.max(fitness, 0f);
 
-        System.out.printf("Fitness: %.2f\n", fitness);
+        if(combatOccurred) {
+            System.out.printf("Fitness -- combat: %.2f\n", fitness);
+        }
+
+        else {
+            System.out.printf("Fitness -- distance: %.2f\n", fitness);
+        }
 
         try(PrintWriter fout = new PrintWriter(fileName)) {
             fout.printf("%.2f\n", fitness);

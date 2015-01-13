@@ -51,3 +51,4 @@ settings.txt
 results*
 *.so
 *.dylib
+*.dll

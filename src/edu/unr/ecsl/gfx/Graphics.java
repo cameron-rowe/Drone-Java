@@ -6,6 +6,9 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.asset.AssetNotFoundException;
 import com.jme3.asset.plugins.FileLocator;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -131,6 +134,8 @@ public class Graphics extends SimpleApplication {
         }
 
         decorateSelectedEntities();
+
+        cameraCenter = rtsCamera.getCenter();
     }
 
     @Override
@@ -153,13 +158,14 @@ public class Graphics extends SimpleApplication {
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
     }
 
+    private Vector3f cameraCenter = new Vector3f(600f,0f,1000f);
     private void setupCamera() {
         cam.setFrustumFar(6000.0f);
         getStateManager().detach(getStateManager().getState(FlyCamAppState.class));
         rtsCamera = new RTSCamera(RTSCamera.UpVector.Y_UP);
-        rtsCamera.setCenter(new Vector3f(600f, 0f, 1000f));
-        rtsCamera.setDistance(400.0f);
-        //rtsCamera.setTilt(-FastMath.QUARTER_PI);
+        rtsCamera.setCenter(cameraCenter);
+        rtsCamera.setDistance(600.0f);
+        rtsCamera.setTilt(-FastMath.QUARTER_PI);
         rtsCamera.setRot(FastMath.TWO_PI);
 
         rtsCamera.setMaxSpeed(RTSCamera.DoF.FWD, 250f, 0.5f);
@@ -211,6 +217,23 @@ public class Graphics extends SimpleApplication {
 
     private void setupInput() {
         inputManager.setCursorVisible(true);
+
+        inputManager.addMapping("Cam-Up", new KeyTrigger(KeyInput.KEY_PGUP));
+        inputManager.addMapping("Cam-Down", new KeyTrigger(KeyInput.KEY_PGDN));
+
+        AnalogListener al = (name, amount, tpf) -> {
+            if(name.equals("Cam-Up")) {
+              cameraCenter.addLocal(0f,150f * tpf, 0f);
+              rtsCamera.setCenter(cameraCenter);
+            }
+
+            if(name.equals("Cam-Down")) {
+                cameraCenter.addLocal(0f,-150f * tpf, 0f);
+                rtsCamera.setCenter(cameraCenter);
+            }
+        };
+
+        inputManager.addListener(al, "Cam-Up", "Cam-Down");
     }
 
     public void addEntity(Entity ent) {

@@ -62,7 +62,6 @@ public class Engine implements Manager {
             graphics.stop();
 
         infoManager.ai.evaluateMatch();
-        stop();
     }
 
     @Override
@@ -145,5 +144,13 @@ public class Engine implements Manager {
 
         options.gameNumber = 1;
         options.scenario = 3;
+
+//        StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < 39; i++) {
+//            sb.append(rand.nextInt(2));
+//        }
+//        options.bitstring = sb.toString();
+//
+//        System.out.println(options.bitstring);
     }
 }
