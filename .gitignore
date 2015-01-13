@@ -49,3 +49,5 @@ com_crashlytics_export_strings.xml
 fitness*
 settings.txt
 results*
+*.so
+*.dylib

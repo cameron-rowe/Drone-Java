@@ -139,7 +139,7 @@ public class Engine implements Manager {
         }
 
         options.speedup = 8.0f;
-        options.timeScalar = 1f;
+        options.timeScalar = 100f;
 
         options.maxEntities = 1024;
 
