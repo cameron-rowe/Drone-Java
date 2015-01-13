@@ -3,10 +3,12 @@ package edu.unr.ecsl.ai;
 import com.jme3.math.Vector3f;
 import edu.unr.ecsl.Engine;
 import edu.unr.ecsl.Manager;
+import edu.unr.ecsl.aspects.WeaponAspect;
 import edu.unr.ecsl.commands.Command;
 import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.enums.EntityState;
 import edu.unr.ecsl.enums.Player;
+import edu.unr.ecsl.enums.UnitAspectType;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,7 +28,7 @@ public class AIManager implements Manager {
     private List<Entity> enemies = new ArrayList<>();
     private List<Entity> entities = new ArrayList<>();
 
-    private float totalDistance, maxDistance, averageFriendlyDistance;
+    private double totalDistance, maxDistance, averageFriendlyDistance;
 
     private long numTicks, numFriendTicks;
 
@@ -40,7 +42,7 @@ public class AIManager implements Manager {
         numTicks = 0;
         numFriendTicks = 0;
 
-        maxDistance = 0.0f;
+        maxDistance = 10000.0;
     }
 
 
@@ -61,18 +63,21 @@ public class AIManager implements Manager {
             enemyPos.zero();
 
             for(Entity fEnt : friendly) {
-                if(!fEnt.isAttacking)
-                    Command.createPotentialMove3DForEnt(fEnt, map.targetPos);
+//                if(!fEnt.isAttacking)
+//                    Command.createPotentialMove3DForEnt(fEnt, map.targetPos);
 
                 Entity closest = engine.entityManager.ents.get(engine.distanceManager.closestEnemy[fEnt.id]);
 
                 fEnt.isAttacking = false;
 
-                if(engine.distanceManager.distance[fEnt.id][closest.id] < 500.0f) {
+                if(engine.distanceManager.distance[fEnt.id][closest.id]
+                        < engine.weaponManager.weaponTypes.get(fEnt.type).maxRange) {
                     Command.createPotentialMove3DForEnt(fEnt, closest.pos);
                     fEnt.isAttacking = true;
 
+                    ((WeaponAspect) fEnt.getAspect(UnitAspectType.WEAPON)).target.entity = closest;
                 }
+
                 friendPos.addLocal(fEnt.pos);
             }
 
@@ -102,9 +107,9 @@ public class AIManager implements Manager {
     public void evaluateMatch() {
         String fileName = "fitness_" + engine.options.seed + ".txt";
 
-        float fitness = 0f;
-        float totalEnemyHealth = 0f;
-        float totalFriendlyHealth = 0f;
+        double fitness;
+        double totalEnemyHealth = 0;
+        double totalFriendlyHealth = 0;
 
         int enemyCount = 0, enemyDeadCount = 0, friendCount = 0, friendDeadCount = 0;
 
@@ -130,18 +135,20 @@ public class AIManager implements Manager {
         }
 
         if(enemyDeadCount == 0 && friendDeadCount == 0) {
-            fitness = (1.0f - ((totalDistance / numTicks) / maxDistance)) * 100.0f;
+            fitness = (1.0 - ((totalDistance / numTicks) / maxDistance)) * 100.0;
         }
 
         else {
             fitness = (totalFriendlyHealth - totalEnemyHealth) +
-                    ((1.0f - (engine.totalRuntime / engine.maxRuntime)) * 100f);
+                    ((1.0 - (engine.totalRuntime / engine.maxRuntime)) * 100.0);
         }
 
-        fitness += 500f;
+        fitness += 500.0;
+
+        System.out.printf("Fitness: %.2f\n", fitness);
 
         try(PrintWriter fout = new PrintWriter(fileName)) {
-            fout.println(fitness);
+            fout.printf("%.2f\n", fitness);
         }
         catch (IOException e) {
             e.printStackTrace();

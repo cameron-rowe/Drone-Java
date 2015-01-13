@@ -1,6 +1,7 @@
 package edu.unr.ecsl.aspects;
 
 import edu.unr.ecsl.commands.Command;
+import edu.unr.ecsl.commands.Guard;
 import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.ents.Target;
 import edu.unr.ecsl.enums.UnitAspectType;
@@ -14,6 +15,7 @@ import java.util.Deque;
 public class UnitAI extends UnitAspect {
     public Deque<Command> commands;
     public Target target;
+    private Guard guard;
 
     public UnitAI(Entity ent) {
         super(ent, UnitAspectType.UNITAI);
@@ -31,6 +33,9 @@ public class UnitAI extends UnitAspect {
         target.entity = null;
         target.location = entity.pos.clone();
         target.offsetDistance = entity.seekRange;
+
+        guard = new Guard(entity, target);
+        guard.init();
     }
 
     @Override
@@ -45,8 +50,15 @@ public class UnitAI extends UnitAspect {
                         commands.getFirst().init();
                 }
             }
+
+            else if(entity.player != entity.engine.options.player) {
+                guard.startGuarding();
+                guard.tick(dt);
+            }
         } catch (Exception e) {
+            //e.printStackTrace();
             System.err.println("Thread Access Error: UnitAI::tick");
+            throw e;
         }
     }
 

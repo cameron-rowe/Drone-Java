@@ -16,15 +16,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.debug.WireBox;
 import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
 import edu.unr.ecsl.Manager;
 import edu.unr.ecsl.ai.InfluenceMap3D;
 import edu.unr.ecsl.commands.Command;
 import edu.unr.ecsl.ents.Entity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by cam on 1/7/15.

@@ -41,7 +41,6 @@ public class EntityManager implements Manager {
     }
 
     private int addEntityToGame(Entity ent) {
-        ent.id = ents.size();
         ents.add(ent);
 
         engine.infoManager.addEntity(ent);

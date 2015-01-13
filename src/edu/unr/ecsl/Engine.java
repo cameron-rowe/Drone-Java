@@ -7,6 +7,7 @@ import edu.unr.ecsl.gfx.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * Created by cam on 10/10/14.
@@ -49,7 +50,7 @@ public class Engine implements Manager {
 
         t1 = System.nanoTime();
         float dt;
-        maxRuntime = 500.0f * options.timeScalar;
+        maxRuntime = 10f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
             dt = updateDT();
             totalRuntime += dt;
@@ -57,8 +58,10 @@ public class Engine implements Manager {
 
         }
 
-        graphics.stop();
+        if(options.enableGfx)
+            graphics.stop();
 
+        infoManager.ai.evaluateMatch();
         stop();
     }
 
@@ -93,14 +96,13 @@ public class Engine implements Manager {
     @Override
     public void stop() {
         running = false;
-        infoManager.ai.evaluateMatch();
     }
 
     private long t1;
 
     private float updateDT() {
         long t2 = System.nanoTime();
-        float dt = (float) (t2-t1) / 1000000000.0f;
+        float dt = (float) (t2-t1) / 1000000000f;
         t1 = t2;
 
         return dt;
@@ -118,33 +120,26 @@ public class Engine implements Manager {
 
         options.player = Player.ONE;
 
-        if(args.length >= 2)
-            options.seed = Long.valueOf(args[1]);
+        options.enableGfx = false;
+        options.seed = 1;
+        options.bitstring = "111000101000010011101000011100101011100";
 
-        else
-            options.seed = 0;
+        for (int i = 0; i < args.length; i++) {
+            if(Pattern.matches("[0-9]|10", args[i]))
+                options.seed = Long.valueOf(args[i]);
 
-        if(args.length >= 3)
-            options.bitstring = args[2];
+            else if(Pattern.matches("[01]+", args[i]))
+                options.bitstring = args[i];
 
-        else
-            options.bitstring = "111000101000010011101000011100101011100";
+            else if(args[i].equals("-g"))
+                options.enableGfx = true;
 
-//        if(args.length >= 4 && args[3].equals("-g")) {
-//            options.enableGfx = true;
-//            options.speedup = 10.0f;
-//            options.timeScalar = 2.0f;
-//        }
-//
-//        else {
-//            options.enableGfx = false;
-//            options.speedup = 50.0f;
-//            options.timeScalar = 2.0f;
-//        }
+            else
+                System.err.println("Unknown cmd arg: " + args[i]);
+        }
 
-        options.enableGfx = true;
-        options.speedup = 2.0f;
-        options.timeScalar = 2.0f;
+        options.speedup = 8.0f;
+        options.timeScalar = 1f;
 
         options.maxEntities = 1024;
 

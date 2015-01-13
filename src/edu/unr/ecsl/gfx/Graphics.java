@@ -19,17 +19,21 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Quad;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 import edu.unr.ecsl.Engine;
 import edu.unr.ecsl.aspects.UnitAI;
-import edu.unr.ecsl.commands.Command;
 import edu.unr.ecsl.commands.UnitCommand;
 import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.enums.Side;
 import edu.unr.ecsl.enums.UnitAspectType;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +46,25 @@ public class Graphics extends SimpleApplication {
     public Engine engine;
     private RTSCamera rtsCamera;
 
-    public Graphics(Engine e) {
+    private static final String settings_file = "settings.txt";
+
+    public Graphics(Engine eng) {
         super(new StatsAppState(), new DebugKeysAppState());
-        engine = e;
+        engine = eng;
+
+        File settingsFile = new File(settings_file);
+        if(settingsFile.exists()) {
+            try {
+                AppSettings newSettings = new AppSettings(true);
+                newSettings.load(new FileInputStream(settingsFile));
+                setSettings(newSettings);
+                setShowSettings(false);
+            }
+            catch (IOException e) {
+                System.err.println("Unable to load settings: " + settings_file);
+            }
+        }
+
     }
 
     private DirectionalLight sun;
@@ -89,6 +109,12 @@ public class Graphics extends SimpleApplication {
 //        terrain.setShadowMode(RenderQueue.ShadowMode.Receive);
 //        rootNode.attachChild(terrain);
 
+        try {
+            settings.save(new FileOutputStream(settings_file));
+        }
+        catch (IOException e) {
+            System.err.println("Unable to save settings: " + settings_file);
+        }
     }
 
     @Override

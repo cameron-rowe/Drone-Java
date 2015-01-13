@@ -55,6 +55,8 @@ public class Entity implements Comparable<Entity> {
 
         rot = new Quaternion();
         desiredRot = new Quaternion();
+
+        id = count++;
     }
 
     public boolean canFly() {

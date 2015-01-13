@@ -106,6 +106,8 @@ public class DistanceManager implements Manager {
             farthestDistance[i] = 0.0f;
             farthestEnt[i] = -1;
         }
+
+        tick(0f);
     }
 
     @Override

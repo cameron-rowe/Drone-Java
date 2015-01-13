@@ -13,13 +13,12 @@ import edu.unr.ecsl.enums.Side;
  * Created by cam on 1/5/15.
  */
 public class Banshee extends Entity {
-    public static int count = 0;
 
     public Banshee(Engine eng) {
         super(eng, EntityType.BANSHEE);
 
         meshName = "Test/Monkey.obj";
-        uiname = String.format("Drone.%d", count++);
+        uiname = String.format("Drone.%d", id);
 
         length = Util.meters(5.0f);
         width = Util.meters(2.0f);

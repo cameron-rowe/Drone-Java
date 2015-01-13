@@ -2,6 +2,7 @@ package edu.unr.ecsl;
 
 import com.jme3.math.Vector3f;
 import edu.unr.ecsl.ents.Entity;
+import edu.unr.ecsl.enums.EntityState;
 import edu.unr.ecsl.enums.EntityType;
 import edu.unr.ecsl.enums.Player;
 import edu.unr.ecsl.enums.Side;
@@ -18,7 +19,31 @@ public class GameManager implements Manager {
 
     @Override
     public void tick(float dt) {
+        int friendCount = 0, enemyCount = 0, friendDeadCount = 0, enemyDeadCount = 0;
+        for(Entity ent : engine.entityManager.ents) {
+            if(ent.player == engine.options.player) {
+                friendCount++;
 
+                if(ent.state == EntityState.DEAD)
+                    friendDeadCount++;
+            }
+
+            else {
+                enemyCount++;
+
+                if(ent.state == EntityState.DEAD)
+                    enemyDeadCount++;
+            }
+        }
+
+        if(enemyCount == 0 || friendCount == 0)
+            return;
+
+        if(enemyCount == enemyDeadCount || friendCount == friendDeadCount) {
+            System.out.printf("\n\nGame Over\n");
+            System.out.printf("Enemy Deaths: %d, Friendly Deaths: %d\n", enemyDeadCount, friendDeadCount);
+            engine.stop();
+        }
     }
 
     @Override
