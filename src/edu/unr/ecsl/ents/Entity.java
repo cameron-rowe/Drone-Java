@@ -70,13 +70,12 @@ public class Entity implements Comparable<Entity> {
 
         for(Aspect asp : aspects)
             asp.init();
-
-        print();
     }
 
     public void tick(float dt) {
         switch (state) {
             case ALIVE:
+                int i = 0;
                 for(UnitAspect aspect : aspects) {
                     aspect.tick(dt);
                 }

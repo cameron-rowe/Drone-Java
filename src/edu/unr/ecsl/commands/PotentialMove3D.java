@@ -24,19 +24,20 @@ public class PotentialMove3D extends PotentialMove {
 
     @Override
     public void init() {
-//        A = 5000.0f;
-//        B = 50000.0f;
-//        B2 = 300000.0f;
-//        m = 3.0f;
-//        m2 = 3.0f;
-//        n = 2.0f;
+//        A = 5000f;
+//        B = 50000f;
+//        B2 = 350000f;
+//        m = 3f;
+//        m2 = 3f;
+//        n = 2f;
 
-        A  = GA.getInstance().getParams().A;
-        B  = GA.getInstance().getParams().B;
-        B2 = GA.getInstance().getParams().B2;
-        m  = GA.getInstance().getParams().m;
-        m2 = GA.getInstance().getParams().m2;
-        n  = GA.getInstance().getParams().n;
+        GA.MicroParams params = GA.getInstance().getParams();
+        A  = params.A;
+        B  = params.B;
+        B2 = params.B2;
+        m  = params.m;
+        m2 = params.m2;
+        n  = params.n;
 
         repulsionThresholdDistance = 10000.0f;
     }
@@ -50,14 +51,14 @@ public class PotentialMove3D extends PotentialMove {
         if(!done()) {
             float repulsivePotential;
             entity.potentialVec.zero();
-            Vector3f temp;
+            Vector3f temp = new Vector3f();
             int nInRange = 1;
 
             for(int i = 0; i < nEnts; i++) {
                 if(i != entity.id) {
                     if(distanceManager.distance[entity.id][i] < repulsionThresholdDistance) {
                         nInRange += 1;
-                        temp = distanceManager.normalizedDistanceVec[i][entity.id];
+                        temp.set(distanceManager.normalizedDistanceVec[i][entity.id]);
 
                         // friendly repulsion
                         if(entity.player == entity.engine.entityManager.ents.get(i).player)
@@ -67,14 +68,14 @@ public class PotentialMove3D extends PotentialMove {
                         // enemy repulsion
                         else
                             repulsivePotential = (B2 * ents.get(i).mass)
-                                    / FastMath.pow(distanceManager.distance[entity.id][i], m);
+                                    / FastMath.pow(distanceManager.distance[entity.id][i], m2);
 
-                        entity.potentialVec.addLocal(temp.mult(repulsivePotential));
+                        entity.potentialVec.addLocal(temp.multLocal(repulsivePotential));
                     }
                 }
             }
 
-            temp = entity.pos.subtract(target.location);
+            entity.pos.subtract(target.location, temp);
 
             float targetDistance = temp.length();
             entity.attractivePotential = -A / FastMath.pow(targetDistance, n);
@@ -89,8 +90,10 @@ public class PotentialMove3D extends PotentialMove {
         }
 
         else {
-            entity.desiredSpeed = 0.0f;
+            entity.desiredSpeed = 0f;
             entity.desiredHeading = entity.heading;
+            entity.desiredVerticalSpeed = 0f;
+            entity.potentialVec.zero();
         }
     }
 }

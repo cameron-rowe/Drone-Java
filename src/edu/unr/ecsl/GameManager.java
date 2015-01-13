@@ -65,7 +65,6 @@ public class GameManager implements Manager {
 
         switch (engine.options.scenario) {
             case 1:
-
                 for (int i = 0; i < 10; i++) {
                     ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
                             new Vector3f(i * 20.0f, 20f, 0.0f),
@@ -92,7 +91,7 @@ public class GameManager implements Manager {
 
 
                     ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
-                            new Vector3f(500f + (i * 20f), 20f, 1000f),
+                            new Vector3f(500f + (i * 20f), 20f, 2000f),
                             0f, Side.RED, Player.TWO);
                     ent.init();
                 }

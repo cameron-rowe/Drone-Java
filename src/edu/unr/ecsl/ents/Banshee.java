@@ -18,7 +18,7 @@ public class Banshee extends Entity {
         super(eng, EntityType.BANSHEE);
 
         meshName = "Test/Monkey.obj";
-        uiname = String.format("Drone.%d", id);
+        uiname = String.format("Banshee.%d", id);
 
         length = Util.meters(5.0f);
         width = Util.meters(2.0f);
@@ -35,7 +35,7 @@ public class Banshee extends Entity {
         selectable = true;
 
         hitpoints = hitpointsMax = 100.0f;
-        seekRange = 1500;
+        seekRange = 800;
 
         side = Side.YELLOW;
     }

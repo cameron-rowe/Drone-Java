@@ -34,8 +34,10 @@ public class UnitAI extends UnitAspect {
         target.location = entity.pos.clone();
         target.offsetDistance = entity.seekRange;
 
-        guard = new Guard(entity, target);
-        guard.init();
+        if(entity.player != entity.engine.options.player) {
+            guard = new Guard(entity, target);
+            guard.init();
+        }
     }
 
     @Override
@@ -56,9 +58,7 @@ public class UnitAI extends UnitAspect {
                 guard.tick(dt);
             }
         } catch (Exception e) {
-            //e.printStackTrace();
             System.err.println("Thread Access Error: UnitAI::tick");
-            throw e;
         }
     }
 

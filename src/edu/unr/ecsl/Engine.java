@@ -138,7 +138,7 @@ public class Engine implements Manager {
                 System.err.println("Unknown cmd arg: " + args[i]);
         }
 
-        options.speedup = 8.0f;
+        options.speedup = 3.0f;
         options.timeScalar = 100f;
 
         options.maxEntities = 1024;

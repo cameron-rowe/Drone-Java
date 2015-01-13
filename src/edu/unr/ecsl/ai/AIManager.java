@@ -63,8 +63,8 @@ public class AIManager implements Manager {
             enemyPos.zero();
 
             for(Entity fEnt : friendly) {
-//                if(!fEnt.isAttacking)
-//                    Command.createPotentialMove3DForEnt(fEnt, map.targetPos);
+                if(!fEnt.isAttacking)
+                    Command.createPotentialMove3DForEnt(fEnt, map.targetPos);
 
                 Entity closest = engine.entityManager.ents.get(engine.distanceManager.closestEnemy[fEnt.id]);
 

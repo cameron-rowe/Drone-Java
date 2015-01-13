@@ -176,7 +176,7 @@ public class UIManager implements Manager {
         else {
             for(GFXNode gfxNode : graphics.selectedNodes) {
                 Entity ent = graphics.engine.entityManager.ents.get(gfxNode.id);
-                Command.createMove3DForEnt(ent, moveTarget.clone());
+                Command.createPotentialMove3DForEnt(ent, moveTarget.clone());
             }
         }
     }

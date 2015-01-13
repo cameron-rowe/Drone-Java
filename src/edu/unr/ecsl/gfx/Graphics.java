@@ -154,10 +154,10 @@ public class Graphics extends SimpleApplication {
     }
 
     private void setupCamera() {
-        cam.setFrustumFar(3000.0f);
+        cam.setFrustumFar(6000.0f);
         getStateManager().detach(getStateManager().getState(FlyCamAppState.class));
         rtsCamera = new RTSCamera(RTSCamera.UpVector.Y_UP);
-        rtsCamera.setCenter(new Vector3f(250f, 100f, 250f));
+        rtsCamera.setCenter(new Vector3f(600f, 0f, 1000f));
         rtsCamera.setDistance(400.0f);
         //rtsCamera.setTilt(-FastMath.QUARTER_PI);
         rtsCamera.setRot(FastMath.TWO_PI);

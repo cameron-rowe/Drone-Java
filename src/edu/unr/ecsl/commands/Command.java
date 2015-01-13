@@ -44,7 +44,7 @@ public abstract class Command {
     }
 
     public static void createPotentialMove3DForEnt(Entity ent, Vector3f pos) {
-        createPotentialMoveForEnt(ent, pos, false);
+        createPotentialMove3DForEnt(ent, pos, false);
     }
 
     public static void createPotentialMove3DForEnt(Entity ent, Vector3f pos, boolean append) {
