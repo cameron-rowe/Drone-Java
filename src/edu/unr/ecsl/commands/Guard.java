@@ -47,6 +47,7 @@ public class Guard extends UnitCommand {
             }
             else if(dist_o > entity.turningRadius) {
                 target.location = target.offset;
+                target.entity = null;
                 move.tick(dt);
             }
 

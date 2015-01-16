@@ -30,6 +30,8 @@ import edu.unr.ecsl.Engine;
 import edu.unr.ecsl.aspects.UnitAI;
 import edu.unr.ecsl.commands.UnitCommand;
 import edu.unr.ecsl.ents.Entity;
+import edu.unr.ecsl.enums.EntityState;
+import edu.unr.ecsl.enums.EntityType;
 import edu.unr.ecsl.enums.Side;
 import edu.unr.ecsl.enums.UnitAspectType;
 
@@ -158,15 +160,13 @@ public class Graphics extends SimpleApplication {
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
     }
 
-    private Vector3f cameraCenter = new Vector3f(600f,0f,1000f);
+    private Vector3f cameraCenter = new Vector3f(600f,500f,1000f);
     private void setupCamera() {
         cam.setFrustumFar(6000.0f);
         getStateManager().detach(getStateManager().getState(FlyCamAppState.class));
         rtsCamera = new RTSCamera(RTSCamera.UpVector.Y_UP);
         rtsCamera.setCenter(cameraCenter);
         rtsCamera.setDistance(600.0f);
-        rtsCamera.setTilt(-FastMath.QUARTER_PI);
-        rtsCamera.setRot(FastMath.TWO_PI);
 
         rtsCamera.setMaxSpeed(RTSCamera.DoF.FWD, 250f, 0.5f);
         rtsCamera.setMaxSpeed(RTSCamera.DoF.SIDE, 250f, 0.5f);
@@ -255,6 +255,9 @@ public class Graphics extends SimpleApplication {
             tex = assetManager.loadTexture("Textures/ecsl.bmp");
         }
 
+        if(ent.type == EntityType.DRONE)
+            gfxNode.scale(5f);
+
         mat.setTexture("ColorMap", tex);
         gfxNode.setMaterial(mat);
         gfxNode.getLocalTransform().setTranslation(ent.pos);
@@ -274,11 +277,15 @@ public class Graphics extends SimpleApplication {
     private void decorateSelectedEntities() {
 
         for(GFXNode gfxNode : selectedNodes) {
+            Entity ent = engine.entityManager.ents.get(gfxNode.id);
+            if(ent.state == EntityState.DEAD)
+                continue;
+
             Vector3f pos = gfxNode.node.getLocalTranslation().clone();
             pos.y -= 8.0f;
             selected.attachChild(makeDisk(pos, 3.0f, ColorRGBA.Blue));
 
-            UnitAI ai = (UnitAI) engine.entityManager.ents.get(gfxNode.id).getAspect(UnitAspectType.UNITAI);
+            UnitAI ai = (UnitAI) ent.getAspect(UnitAspectType.UNITAI);
 
             if(ai != null) {
                 if(!ai.commands.isEmpty()) {
@@ -287,6 +294,10 @@ public class Graphics extends SimpleApplication {
                     if(command != null) {
                         selected.attachChild(makeLine(pos, command.target.location, ColorRGBA.Cyan));
                     }
+                }
+
+                if(ai.guard != null) {
+                    selected.attachChild(makeLine(pos, ai.guard.target.location, ColorRGBA.Red));
                 }
             }
         }

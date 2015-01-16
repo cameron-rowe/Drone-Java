@@ -51,6 +51,9 @@ public class Physics3D extends Physics {
         //finally update pos
         entity.pos.addLocal(entity.vel.mult(dt));
 
+        if(entity.player != entity.engine.options.player)
+            System.out.println("Height: " + entity.pos.y);
+
         if(entity.pos.y < 2.0f)
             entity.pos.y = 2.0f;
 

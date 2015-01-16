@@ -21,7 +21,7 @@ public class MoveDirect extends UnitCommand {
     @Override
     public boolean done() {
         float distance = entity.pos.distanceSquared(target.location);
-        return distance <= (entity.length * entity.length);
+        return distance <= (entity.turningRadius * entity.turningRadius);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class MoveDirect extends UnitCommand {
             computeRepulsor();
 
             target.location.subtract(entity.pos, relativePos);
-            entity.desiredHeading = FastMath.atan2(relativePos.z, relativePos.x);
+            entity.desiredHeading = -FastMath.atan2(relativePos.z, relativePos.x);
             entity.desiredSpeed = entity.maxSpeed;
 
             if(repulsor.length() > 0.0f) {
@@ -68,18 +68,18 @@ public class MoveDirect extends UnitCommand {
     protected void computeRepulsor() {
         repulsor.zero();
 
-        for(Entity ent : entity.engine.entityManager.ents) {
-            if(ent.id == entity.id) continue;
-
-            float collide = isCollide(ent);
-            if(collide > 0.0f) {
-                Vector3f dr = entity.pos.subtract(ent.pos);
-                dr.normalizeLocal();
-                Vector3f dt = target.location.subtract(entity.pos);
-                dr.multLocal(collide * dt.length());
-                repulsor.addLocal(dr);
-            }
-        }
+//        for(Entity ent : entity.engine.entityManager.ents) {
+//            if(ent.id == entity.id) continue;
+//
+//            float collide = isCollide(ent);
+//            if(collide > 0.0f) {
+//                Vector3f dr = entity.pos.subtract(ent.pos);
+//                dr.normalizeLocal();
+//                Vector3f dt = target.location.subtract(entity.pos);
+//                dr.multLocal(collide * dt.length());
+//                repulsor.addLocal(dr);
+//            }
+//        }
     }
 
     protected float isCollide(Entity ent) {

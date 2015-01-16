@@ -35,7 +35,7 @@ public class MoveDirect3D extends MoveDirect {
             else if(entity.pos.y > 598f)
                 entity.pos.y = 598f;
 
-            if(FastMath.abs(relativePos.y) < 15f)
+            if(FastMath.abs(relativePos.y) < 5f)
                 entity.desiredVerticalSpeed = 0f;
 
             else if(relativePos.y > 0f)

@@ -154,6 +154,7 @@ public class AIManager implements Manager {
 
         if(combatOccurred) {
             System.out.printf("Fitness -- combat: %.2f\n", fitness);
+            System.out.printf("Friendly Lost: %d, Enemy Lost: %d\n", friendDeadCount, enemyDeadCount);
         }
 
         else {

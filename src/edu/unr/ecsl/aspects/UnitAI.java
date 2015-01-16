@@ -15,7 +15,7 @@ import java.util.Deque;
 public class UnitAI extends UnitAspect {
     public Deque<Command> commands;
     public Target target;
-    private Guard guard;
+    public Guard guard;
 
     public UnitAI(Entity ent) {
         super(ent, UnitAspectType.UNITAI);
