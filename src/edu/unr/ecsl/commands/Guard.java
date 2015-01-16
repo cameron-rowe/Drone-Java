@@ -14,6 +14,7 @@ public class Guard extends UnitCommand {
     public MoveDirect3D move;
     public boolean isGuarding;
 
+    private int count;
     public Guard(Entity ent, Target tgt) {
         super(ent, CommandType.RAM, tgt);
     }
@@ -29,6 +30,8 @@ public class Guard extends UnitCommand {
         isGuarding = false;
         move = new MoveDirect3D(entity, target);
         move.init();
+
+        count = 0;
     }
 
     @Override
@@ -39,18 +42,16 @@ public class Guard extends UnitCommand {
             float dist_o = target.offset.distance(enemy.pos);
             float dist_e = entity.pos.distance(enemy.pos);
 
-            if((dist_o < entity.seekRange || dist_e < entity.seekRange)
-                && enemy.state == EntityState.ALIVE) {
+            if((dist_o < entity.seekRange || dist_e < entity.seekRange) && enemy.state == EntityState.ALIVE) {
                 target.entity = enemy;
                 target.location = enemy.pos.clone();
                 move.tick(dt);
             }
-            else if(dist_o > entity.turningRadius) {
+            else if(dist_o > entity.turningRadius*10) {
                 target.location = target.offset;
                 target.entity = null;
                 move.tick(dt);
             }
-
             else {
                 stopGuarding();
             }

@@ -54,6 +54,8 @@ public class DistanceManager implements Manager {
         List<Entity> ents = engine.entityManager.ents;
         int nEnts = ents.size();
 
+
+
         Entity ent, other;
 
         for (int i = 0; i < nEnts; i++) {
@@ -61,7 +63,10 @@ public class DistanceManager implements Manager {
             distance[i][i] = 0.0f;
             distanceVec[i][i].zero();
 
+            closestEnemyDistance[i] = Float.MAX_VALUE;
+
             for (int j = 0; j < nEnts; j++) {
+
                 other = ents.get(j);
 
                 other.pos.subtract(ent.pos, distanceVec[i][j]);
@@ -74,13 +79,13 @@ public class DistanceManager implements Manager {
                 distance[j][i] = distance[i][j];
 
                 if(distance[i][j] < closestEnemyDistance[i] && other.state == EntityState.ALIVE
-                        && other.side != ent.side) {
+                        && other.player != ent.player) {
                     closestEnemyDistance[i] = distance[i][j];
                     closestEnemy[i] = j;
                 }
 
                 if(distance[j][i] < closestEnemyDistance[j] && other.state == EntityState.ALIVE
-                        && other.side != ent.side) {
+                        && other.player != ent.player) {
                     closestEnemyDistance[j] = distance[j][i];
                     closestEnemy[j] = i;
                 }
