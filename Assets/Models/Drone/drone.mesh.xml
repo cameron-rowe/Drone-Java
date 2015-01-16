@@ -114,7 +114,7 @@
                 <face v1="79" v2="78" v3="76" />
             </faces>
             <geometry vertexcount="240">
-                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="float2" texture_coords="1">
+                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="2" texture_coords="1">
                     <vertex>
                         <position x="-1.48154" y="1.22345" z="-1.55074" />
                         <normal x="0.675476" y="0.00875566" z="-0.73733" />
@@ -1432,7 +1432,7 @@
                 <face v1="79" v2="78" v3="76" />
             </faces>
             <geometry vertexcount="240">
-                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="float2" texture_coords="1">
+                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="2" texture_coords="1">
                     <vertex>
                         <position x="-1.48154" y="1.22345" z="1.44926" />
                         <normal x="0.675476" y="0.00875566" z="-0.73733" />
@@ -2750,7 +2750,7 @@
                 <face v1="79" v2="78" v3="76" />
             </faces>
             <geometry vertexcount="240">
-                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="float2" texture_coords="1">
+                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="2" texture_coords="1">
                     <vertex>
                         <position x="1.51846" y="1.22345" z="1.44926" />
                         <normal x="0.675476" y="0.00875566" z="-0.73733" />
@@ -4068,7 +4068,7 @@
                 <face v1="79" v2="78" v3="76" />
             </faces>
             <geometry vertexcount="240">
-                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="float2" texture_coords="1">
+                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="2" texture_coords="1">
                     <vertex>
                         <position x="1.51846" y="1.22345" z="-1.55074" />
                         <normal x="0.675476" y="0.00875566" z="-0.73733" />
@@ -6544,7 +6544,7 @@
                 <face v1="876" v2="875" v3="874" />
             </faces>
             <geometry vertexcount="2664">
-                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="float2" texture_coords="1">
+                <vertexbuffer positions="true" normals="true" texture_coord_dimensions_0="2" texture_coords="1">
                     <vertex>
                         <position x="-0.292274" y="0.79942" z="0.929855" />
                         <normal x="-0.168127" y="0.956262" z="-0.239366" />

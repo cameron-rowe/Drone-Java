@@ -11,5 +11,5 @@ public enum EntityType {
     THRO,
     MARAUDER,
     HELLION,
-    BANSHEE
+    DRONE
 }

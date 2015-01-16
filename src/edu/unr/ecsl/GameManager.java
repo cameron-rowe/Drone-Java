@@ -66,7 +66,7 @@ public class GameManager implements Manager {
         switch (engine.options.scenario) {
             case 1:
                 for (int i = 0; i < 10; i++) {
-                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
+                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
                             new Vector3f(i * 20.0f, 20f, 0.0f),
                             0.0f, Side.BLUE, Player.ONE);
 
@@ -75,7 +75,7 @@ public class GameManager implements Manager {
             break;
 
             case 2:
-                ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
+                ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
                         new Vector3f(0.0f, 20f, 0.0f),
                         0.0f, Side.BLUE, Player.ONE);
 
@@ -84,13 +84,13 @@ public class GameManager implements Manager {
 
             case 3:
                 for (int i = 0; i < 5; i++) {
-                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
+                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
                             new Vector3f(500f + (i * 20f), 20f, 500f),
                             0f, Side.BLUE, Player.ONE);
                     ent.init();
 
 
-                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.BANSHEE,
+                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
                             new Vector3f(500f + (i * 20f), 20f, 2000f),
                             0f, Side.RED, Player.TWO);
                     ent.init();

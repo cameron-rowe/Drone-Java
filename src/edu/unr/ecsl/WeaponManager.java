@@ -43,7 +43,7 @@ public class WeaponManager implements Manager {
                     break;
                 case HELLION:
                     break;
-                case BANSHEE:
+                case DRONE:
                     weaponTypes.put(eType, WeaponType.Rifle);
                     break;
             }

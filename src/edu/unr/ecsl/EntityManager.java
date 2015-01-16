@@ -1,7 +1,7 @@
 package edu.unr.ecsl;
 
 import com.jme3.math.Vector3f;
-import edu.unr.ecsl.ents.Banshee;
+import edu.unr.ecsl.ents.Drone;
 import edu.unr.ecsl.ents.Entity;
 import edu.unr.ecsl.ents.Marine;
 import edu.unr.ecsl.enums.EntityType;
@@ -78,8 +78,8 @@ public class EntityManager implements Manager {
                 break;
             case HELLION:
                 break;
-            case BANSHEE:
-                ent = new Banshee(engine);
+            case DRONE:
+                ent = new Drone(engine);
                 break;
 
             default:
@@ -88,7 +88,7 @@ public class EntityManager implements Manager {
         }
 
         if (ent == null) {
-            ent = new Banshee(engine);
+            ent = new Drone(engine);
         }
 
         ent.pos = pos;
