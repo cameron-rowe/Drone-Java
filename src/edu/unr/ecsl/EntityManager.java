@@ -97,4 +97,25 @@ public class EntityManager implements Manager {
 
         return ent;
     }
+
+    public Entity getEntity(int id) {
+        Entity ret = null;
+        try {
+            ret = ents.get(id);
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
+
+        return ret;
+    }
+
+    public boolean hasFriendlyUnits() {
+        for(Entity ent : ents) {
+            if(ent.player == engine.options.player)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean hasEnemyUnits() {
+        return !hasFriendlyUnits();
+    }
 }

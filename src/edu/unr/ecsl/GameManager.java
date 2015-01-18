@@ -96,6 +96,13 @@ public class GameManager implements Manager {
                     ent.init();
                 }
             break;
+
+            case 4:
+                ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
+                        new Vector3f(500f, 20f, 1500f),
+                        0f, Side.RED, Player.TWO);
+                ent.init();
+            break;
         }
     }
 }

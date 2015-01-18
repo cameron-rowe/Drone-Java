@@ -1,7 +1,6 @@
 package edu.unr.ecsl.aspects;
 
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import edu.unr.ecsl.ents.Entity;
 
@@ -32,10 +31,10 @@ public class Physics2D extends Physics {
             entity.speed -= (entity.maxAcceleration * dt);
         }
 
-        Quaternion desiredRot = new Quaternion().fromAngleAxis(entity.desiredHeading, Vector3f.UNIT_Y);
+        desiredRot.fromAngleAxis(entity.desiredHeading, Vector3f.UNIT_Y);
 
         //update it all
-        entity.rot.slerp(desiredRot, entity.rot, entity.maxRotationalSpeed * dt);
+        entity.rot.slerp(desiredRot, entity.maxRotationalSpeed * dt);
 
         //entity.heading = entity.rot.getYaw().valueRadians();
         entity.heading = entity.rot.getY();

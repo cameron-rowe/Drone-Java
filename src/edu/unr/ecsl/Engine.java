@@ -52,7 +52,8 @@ public class Engine implements Manager {
         float dt;
         maxRuntime = 10f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
-            dt = 1.1804E-5f;//updateDT();
+            dt = updateDT();
+            //dt = 1.2E-5f;
             totalRuntime += dt;
             tick(dt * options.speedup);
         }
@@ -84,8 +85,7 @@ public class Engine implements Manager {
         managers.add(gameManager);
         managers.add(distanceManager);
 
-        for(Manager m : managers)
-            m.init();
+        managers.forEach(Manager::init);
 
         if (options.enableGfx)
             graphics = new Graphics(this);
@@ -122,12 +122,21 @@ public class Engine implements Manager {
         options.seed = 1;
         options.bitstring = "111000101000010011101000011100101011100";
 
+        options.gameNumber = 1;
+        options.scenario = 3;
+
         for (int i = 0; i < args.length; i++) {
             if(Pattern.matches("[0-9]|10", args[i]))
                 options.seed = Long.valueOf(args[i]);
 
             else if(Pattern.matches("[01]+", args[i]))
                 options.bitstring = args[i];
+
+            else if(Pattern.matches("-s[1-9]", args[i]))
+                options.scenario = Character.getNumericValue(args[i].charAt(2));
+
+            else if(args[i].equals("-s") && i != (args.length - 1))
+                options.scenario = Integer.valueOf(args[++i]);
 
             else if(args[i].equals("-g"))
                 options.enableGfx = true;
@@ -140,9 +149,6 @@ public class Engine implements Manager {
         options.timeScalar = 1000f;
 
         options.maxEntities = 1024;
-
-        options.gameNumber = 1;
-        options.scenario = 3;
 
 //        StringBuilder sb = new StringBuilder();
 //        for (int i = 0; i < 39; i++) {

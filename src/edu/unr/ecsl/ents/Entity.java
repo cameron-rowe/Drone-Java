@@ -68,8 +68,7 @@ public class Entity implements Comparable<Entity> {
         aspects.add(new UnitAI(this));
         aspects.add(new WeaponAspect(this));
 
-        for(Aspect asp : aspects)
-            asp.init();
+        aspects.forEach(Aspect::init);
     }
 
     public void tick(float dt) {

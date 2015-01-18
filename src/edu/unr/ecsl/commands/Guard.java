@@ -36,7 +36,7 @@ public class Guard extends UnitCommand {
 
     @Override
     public void tick(float dt) {
-        Entity enemy = entity.engine.entityManager.ents.get(distanceManager.closestEnemy[entity.id]);
+        Entity enemy = entity.engine.entityManager.getEntity(distanceManager.closestEnemy[entity.id]);
 
         if (enemy != null) {
             float dist_o = target.offset.distance(enemy.pos);

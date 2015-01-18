@@ -61,7 +61,7 @@ public class PotentialMove3D extends PotentialMove {
                         temp.set(distanceManager.normalizedDistanceVec[i][entity.id]);
 
                         // friendly repulsion
-                        if(entity.player == entity.engine.entityManager.ents.get(i).player)
+                        if(entity.player == entity.engine.entityManager.getEntity(i).player)
                             repulsivePotential = (B * ents.get(i).mass)
                                     / FastMath.pow(distanceManager.distance[entity.id][i], m);
 

@@ -131,8 +131,8 @@ public class Graphics extends SimpleApplication {
 
         for (int i = 0; i < nGFXNodes; i++) {
             Spatial spatial = gfxNodes[i].node;
-            spatial.setLocalTranslation(engine.entityManager.ents.get(gfxNodes[i].id).pos);
-            spatial.setLocalRotation(engine.entityManager.ents.get(gfxNodes[i].id).rot);
+            spatial.setLocalTranslation(engine.entityManager.getEntity(gfxNodes[i].id).pos);
+            spatial.setLocalRotation(engine.entityManager.getEntity(gfxNodes[i].id).rot);
         }
 
         decorateSelectedEntities();
@@ -183,10 +183,10 @@ public class Graphics extends SimpleApplication {
         fpp.addFilter(water);
         viewPort.addProcessor(fpp);
 
-        Quad q = new Quad(10000.0f, 10000.0f);
+        Quad q = new Quad(100000.0f, 100000.0f);
         Geometry groundPlane = new Geometry("Ground", q);
         groundPlane.rotate(FastMath.HALF_PI, 0.0f, 0.0f);
-        groundPlane.setLocalTranslation(-5000.0f, 0.0f, -5000.0f);
+        groundPlane.setLocalTranslation(-50000.0f, 0.0f, -50000.0f);
         groundPlane.setCullHint(Spatial.CullHint.Always);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Red);
@@ -277,7 +277,7 @@ public class Graphics extends SimpleApplication {
     private void decorateSelectedEntities() {
 
         for(GFXNode gfxNode : selectedNodes) {
-            Entity ent = engine.entityManager.ents.get(gfxNode.id);
+            Entity ent = engine.entityManager.getEntity(gfxNode.id);
             if(ent.state == EntityState.DEAD)
                 continue;
 

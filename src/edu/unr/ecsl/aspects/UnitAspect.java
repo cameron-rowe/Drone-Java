@@ -6,7 +6,7 @@ import edu.unr.ecsl.enums.UnitAspectType;
 /**
  * Created by cam on 1/8/15.
  */
-public class UnitAspect implements Aspect {
+public abstract class UnitAspect implements Aspect {
     public UnitAspectType aspectType;
     public Entity entity;
 
@@ -16,10 +16,8 @@ public class UnitAspect implements Aspect {
     }
 
     @Override
-    public void init() {
-    }
+    public abstract void init();
 
     @Override
-    public void tick(float dt) {
-    }
+    public abstract void tick(float dt);
 }

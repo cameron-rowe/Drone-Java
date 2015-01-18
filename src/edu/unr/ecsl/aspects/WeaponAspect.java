@@ -44,7 +44,7 @@ public class WeaponAspect extends UnitAspect {
 
         if(entity.isAttacking && cooldown <= 0f) {
             if(target.entity == null && distanceManager.closestEnemyDistance[entity.id] <= weaponType.maxRange) {
-                target.entity = entity.engine.entityManager.ents.get(distanceManager.closestEnemy[entity.id]);
+                target.entity = entity.engine.entityManager.getEntity(distanceManager.closestEnemy[entity.id]);
             }
 
             if(target.entity != null && target.entity.state == EntityState.ALIVE

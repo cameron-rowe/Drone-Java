@@ -49,7 +49,7 @@ public class UIManager implements Manager {
             selectionQuad.updatePositions(width / 2.0f, height / 2.0f, 1.0f);
         }
 
-        if(handlingMove) {
+        if(handlingMove && !graphics.selectedNodes.isEmpty()) {
             Vector2f mousePos = inputManager.getCursorPosition();
 
             float yDiff = mousePos.y - mouseMoveY;
@@ -161,7 +161,7 @@ public class UIManager implements Manager {
     }
 
     private void handleRightClick() {
-        if(handlingMove) {
+        if(handlingMove && !graphics.selectedNodes.isEmpty()) {
             mouseMoveY = inputManager.getCursorPosition().y;
             rightClickStartPos = getGroundPosFromClick();
 
@@ -171,12 +171,21 @@ public class UIManager implements Manager {
             }
 
             moveTarget = rightClickStartPos.clone();
+
+            float y = 0f, i = 0f;
+            for(GFXNode gfxNode : graphics.selectedNodes) {
+                y += gfxNode.node.getLocalTranslation().y;
+                i += 1f;
+            }
+
+            moveTarget.y = y / i;
         }
 
         else {
             for(GFXNode gfxNode : graphics.selectedNodes) {
-                Entity ent = graphics.engine.entityManager.ents.get(gfxNode.id);
-                Command.createPotentialMove3DForEnt(ent, moveTarget.clone());
+                Entity ent = graphics.engine.entityManager.getEntity(gfxNode.id);
+                //Command.createPotentialMove3DForEnt(ent, moveTarget.clone());
+                Command.createMove3DForEnt(ent, moveTarget.clone());
             }
         }
     }
@@ -200,7 +209,7 @@ public class UIManager implements Manager {
     private void drawInfluenceMap() {
         InfluenceMap3D map = graphics.engine.infoManager.map;
         Box box = new Box();
-        int maxValue = 0;
+        float maxValue = 100f;
 
         for (int i = 0; i < map.dataSizeX; i++) {
             for (int j = 0; j < map.dataSizeY; j++) {
@@ -217,7 +226,7 @@ public class UIManager implements Manager {
                     int yMax = y + map.cellResY - offset;
                     int zMax = z + map.cellResZ - offset;
 
-                    float map_value = (float)map.map[i][j][k] / 100f;
+                    float map_value = (float)map.map[i][j][k] / maxValue;
 
                     Vector3f min = new Vector3f(x, y, z), max = new Vector3f(xMax, yMax, zMax);
                     max.subtractLocal(min);

@@ -8,19 +8,26 @@ import edu.unr.ecsl.enums.UnitAspectType;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Created by cam on 1/8/15.
  */
 public class UnitAI extends UnitAspect {
-    public Deque<Command> commands;
+    public final Deque<Command> commands;
     public Target target;
     public Guard guard;
 
     public UnitAI(Entity ent) {
         super(ent, UnitAspectType.UNITAI);
 
-        commands = new ArrayDeque<>();
+        if(entity.engine.options.enableGfx || entity.engine.options.enableNetworking)
+            commands = new ConcurrentLinkedDeque<>();
+
+        else
+            commands = new ArrayDeque<>();
+
+        guard = null;
     }
 
     @Override
@@ -34,7 +41,7 @@ public class UnitAI extends UnitAspect {
         target.location = entity.pos.clone();
         target.offsetDistance = entity.seekRange;
 
-        if(entity.player != entity.engine.options.player) {
+        if(entity.player != entity.engine.options.player && entity.engine.entityManager.hasFriendlyUnits()) {
             guard = new Guard(entity, target);
             guard.init();
         }
@@ -42,40 +49,40 @@ public class UnitAI extends UnitAspect {
 
     @Override
     public void tick(float dt) {
-        try {
-            if(!commands.isEmpty()) {
+        synchronized (commands) {
+             if(!commands.isEmpty()) {
                 commands.getFirst().tick(dt);
 
-                if(commands.getFirst().done()) {
+                 if(commands.getFirst().done()) {
                     commands.removeFirst();
-                    if(!commands.isEmpty())
+                     if(!commands.isEmpty())
                         commands.getFirst().init();
                 }
             }
+        }
 
-            else if(entity.player != entity.engine.options.player) {
-                guard.startGuarding();
-                guard.tick(dt);
-            }
-        } catch (Exception e) {
-            System.err.println("Thread Access Error: UnitAI::tick");
+        if(guard != null) {
+            guard.startGuarding();
+            guard.tick(dt);
         }
     }
 
     public void addCommand(Command command) {
-        commands.addLast(command);
+        synchronized (commands) {
+            commands.addLast(command);
+        }
     }
 
     public void setCommand(Command command) {
-        clearCommands();
-        commands.addLast(command);
-    }
-
-    public void setCommandList(Deque<Command> cmds) {
-        commands = cmds;
+        synchronized (commands) {
+            clearCommands();
+            commands.addLast(command);
+        }
     }
 
     public void clearCommands() {
-        commands.clear();
+        synchronized (commands) {
+            commands.clear();
+        }
     }
 }
