@@ -52,8 +52,8 @@ public class Engine implements Manager {
         float dt;
         maxRuntime = 10f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
-            dt = updateDT();
-            //dt = 1.2E-5f;
+            //dt = updateDT();
+            dt = 1.2E-5f;
             totalRuntime += dt;
             tick(dt * options.speedup);
         }
@@ -146,7 +146,7 @@ public class Engine implements Manager {
         }
 
         options.speedup = 15.0f;
-        options.timeScalar = 1000f;
+        options.timeScalar = 3f;
 
         options.maxEntities = 1024;
 
