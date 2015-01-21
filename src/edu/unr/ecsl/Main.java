@@ -6,6 +6,7 @@ package edu.unr.ecsl;
 public class Main {
     public static void main(String[] args)
     {
+        System.out.println("Starting Drone-Java");
         try {
             Engine e = new Engine(args);
             e.run();

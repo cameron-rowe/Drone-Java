@@ -54,20 +54,15 @@ public class DistanceManager implements Manager {
         List<Entity> ents = engine.entityManager.ents;
         int nEnts = ents.size();
 
-
-
-        Entity ent, other;
-
         for (int i = 0; i < nEnts; i++) {
-            ent = ents.get(i);
+            Entity ent = ents.get(i);
             distance[i][i] = 0.0f;
             distanceVec[i][i].zero();
 
             closestEnemyDistance[i] = Float.MAX_VALUE;
 
             for (int j = 0; j < nEnts; j++) {
-
-                other = ents.get(j);
+                Entity other = ents.get(j);
 
                 other.pos.subtract(ent.pos, distanceVec[i][j]);
                 normalizedDistanceVec[i][j].set(distanceVec[i][j]).normalizeLocal();

@@ -34,7 +34,7 @@ public class Drone extends Entity {
 
         selectable = true;
 
-        hitpoints = hitpointsMax = 100.0f;
+        hitpoints = hitpointsMax = 120.0f;
         seekRange = 800;
 
         side = Side.YELLOW;

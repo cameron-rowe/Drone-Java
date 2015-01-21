@@ -20,7 +20,7 @@ public class WeaponAspect extends UnitAspect {
     private int standstill;
 
     private final static float BEING_ATTACKED = 100f;
-    private final static int STANDSTILL = 8;
+    private final static int STANDSTILL = 2;
 
     private DistanceManager distanceManager;
     private WeaponManager weaponManager;
@@ -90,7 +90,7 @@ public class WeaponAspect extends UnitAspect {
         if(wa != null)
             wa.takeDamage(damage);
         cooldown = weaponType.damageCooldown;
-        onfire = standstill;
+        onfire = STANDSTILL;
     }
 
     private void takeDamage(float amount) {

@@ -91,6 +91,8 @@ public class InfluenceMap3D {
                     }
 
                 }
+
+        //System.out.println("Target: " + targetPos);
     }
 
     public void init(int sizeX, int sizeY, int sizeZ, int wSizeX, int wSizeY, int wSizeZ) {

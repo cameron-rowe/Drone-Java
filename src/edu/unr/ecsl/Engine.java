@@ -4,6 +4,7 @@ import edu.unr.ecsl.ai.InfoManager;
 import edu.unr.ecsl.enums.Player;
 import edu.unr.ecsl.gfx.Graphics;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -46,14 +47,19 @@ public class Engine implements Manager {
     public void run() {
         if (options.enableGfx) {
             graphics.start();
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         t1 = System.nanoTime();
         float dt;
         maxRuntime = 10f * options.timeScalar;
         while(running && totalRuntime < maxRuntime) {
-            //dt = updateDT();
-            dt = 1.2E-5f;
+            dt = updateDT();
+            //dt = 1.2E-5f;
             totalRuntime += dt;
             tick(dt * options.speedup);
         }
@@ -123,7 +129,7 @@ public class Engine implements Manager {
         options.bitstring = "111000101000010011101000011100101011100";
 
         options.gameNumber = 1;
-        options.scenario = 3;
+        options.scenario = 2;
 
         for (int i = 0; i < args.length; i++) {
             if(Pattern.matches("[0-9]|10", args[i]))
@@ -145,8 +151,8 @@ public class Engine implements Manager {
                 System.err.println("Unknown cmd arg: " + args[i]);
         }
 
-        options.speedup = 15.0f;
-        options.timeScalar = 3f;
+        options.speedup = 15f;
+        options.timeScalar = 6f;
 
         options.maxEntities = 1024;
 

@@ -84,6 +84,18 @@ public class Entity implements Comparable<Entity> {
                 state = EntityState.DEAD;
                 break;
         }
+
+        if(pos.x > 5000f)
+            pos.x = 5000f;
+
+        else if(pos.x < 0f)
+            pos.x = 0f;
+
+        if(pos.z > 5000f)
+            pos.z = 5000f;
+
+        else if(pos.z < 0f)
+            pos.z = 0f;
     }
 
     @Override

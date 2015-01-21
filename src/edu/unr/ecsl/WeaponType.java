@@ -43,7 +43,7 @@ public class WeaponType {
         Unknown = new WeaponType();
 
         Fusion_Cutter.set("Fusion_Cutter", 16, 1, 22, 1, 0,  30, 0, 0, 0, false, true, false);
-        Rifle        .set("Rifle",         30, 2, 22, 1, 0, 320, 0, 0, 0, true, true, false);
+        Rifle        .set("Rifle",         30, 2, 2, 1, 0, 320, 0, 0, 0, true, true, false);
         Hellfire     .set("Hellfire",      25, 1, 22, 1, 0, 200, 200, 0, 300, false, true, false);
         Cannon       .set("Cannon",        30, 3, 37, 1, 0, 300, 50, 70, 100, false, true, false);
         None         .set("None",           0, 0,  0, 0, 0,   0,  0,  0,   0, false, false, false);

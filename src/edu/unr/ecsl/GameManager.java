@@ -75,23 +75,38 @@ public class GameManager implements Manager {
             break;
 
             case 2:
-                ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
-                        new Vector3f(0.0f, 20f, 0.0f),
-                        0.0f, Side.BLUE, Player.ONE);
+                for (int i = 0; i < 2; i++) {
+                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
+                            new Vector3f(1500f + (i * 100f), 20f, 1000f),
+                            0.0f, Side.BLUE, Player.ONE);
 
-                ent.init();
-            break;
+                    ent.init();
+
+                    Vector3f t = ent.pos;
+                    System.out.println("Initial Pos: " + ent.pos);
+
+                    ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
+                            new Vector3f(1000f + (i * 100f), 20f, 2000f),
+                            0.0f, Side.RED, Player.TWO);
+
+                    ent.init();
+
+                    System.out.println("Initial Pos: " + ent.pos);
+
+                    System.out.println("Initial Dist: " + ent.pos.distance(t));
+                }
+                break;
 
             case 3:
                 for (int i = 0; i < 5; i++) {
                     ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
-                            new Vector3f(500f + (i * 20f), 20f, 500f),
+                            new Vector3f(1500f + (i * 20f), 20f, 500f),
                             0f, Side.BLUE, Player.ONE);
                     ent.init();
 
 
                     ent = engine.entityManager.createEntityForPlayerAndSide(EntityType.DRONE,
-                            new Vector3f(500f + (i * 20f), 20f, 2000f),
+                            new Vector3f(1500f + (i * 20f), 20f, 2000f),
                             0f, Side.RED, Player.TWO);
                     ent.init();
                 }

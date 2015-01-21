@@ -160,7 +160,7 @@ public class Graphics extends SimpleApplication {
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
     }
 
-    private Vector3f cameraCenter = new Vector3f(600f,500f,1000f);
+    private Vector3f cameraCenter = new Vector3f(1000f,500f,0f);
     private void setupCamera() {
         cam.setFrustumFar(6000.0f);
         getStateManager().detach(getStateManager().getState(FlyCamAppState.class));

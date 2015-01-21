@@ -46,7 +46,6 @@ public class GA {
             buffer[i] = Character.getNumericValue(bitstring.charAt(i));
         }
 
-
         int offset = 0;
 
         int[] param1 = Arrays.copyOfRange(buffer, offset, offset+5);

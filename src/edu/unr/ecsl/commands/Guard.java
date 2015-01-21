@@ -43,11 +43,13 @@ public class Guard extends UnitCommand {
             float dist_e = entity.pos.distance(enemy.pos);
 
             if((dist_o < entity.seekRange || dist_e < entity.seekRange) && enemy.state == EntityState.ALIVE) {
+                entity.isAttacking = true;
                 target.entity = enemy;
                 target.location = enemy.pos.clone();
                 move.tick(dt);
             }
             else if(dist_o > entity.turningRadius*10) {
+                entity.isAttacking = false;
                 target.location = target.offset;
                 target.entity = null;
                 move.tick(dt);
